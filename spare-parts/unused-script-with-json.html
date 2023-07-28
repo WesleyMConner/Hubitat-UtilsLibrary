@@ -1,0 +1,234 @@
+// cSpell:words installedapp
+<script>
+    var appId = 1072
+    var globalDeviceId = 0;
+    var globalDeletedCallback;
+    var globalCancelledCallback;
+    var confirmed = true;
+
+    var model = []
+    var configPage = ""
+    $(function () {
+        $(window).on('unload', function () {
+            saveScrollPosition('scrollPositionApp1072');
+        });
+
+        $(window).on('load', function () {
+            restoreScrollPosition('scrollPositionApp1072');
+            $('.newLine').each(function (i, v) {
+                $(v).width($(v).parent().width() - $(v).prevAll('.mdl-cell').width())
+            })
+        })
+    });
+
+    var pageName = "TestPage";
+    var clock = "12";
+
+    $(function() {
+        $('#divMainUIContent').scroll(function() {
+            const container = $(this);
+            const scrollTop = container.scrollTop();
+            const buttonScrollTop = $('#buttonScrollTop');
+
+            if (scrollTop > 50) {
+                buttonScrollTop.fadeIn();
+            } else {
+                buttonScrollTop.fadeOut();
+            }
+
+            const containerHeight = container.prop('scrollHeight');
+            const buttonsContainer = $('#fieldsetAppButtons');
+            const maxHeight = container.height();
+            const buttonsPos = buttonsContainer.length > 0 ? buttonsContainer.position().top : 0;
+            const relevantContainerHeight = buttonsPos > 0 ? Math.round(buttonsPos + 16) : containerHeight;
+
+            const extraMarginBottom = Math.round(maxHeight + scrollTop - relevantContainerHeight);
+            if (extraMarginBottom > 0) {
+                buttonScrollTop.css('margin-bottom', 'calc(1.5rem + ' + extraMarginBottom + 'px)');
+            } else {
+                buttonScrollTop.css('margin-bottom', '1.5rem');
+            }
+        });
+
+        var path = window.location.pathname.replace('/configure/', '/configure/json/')
+        if (pageName != "" && pageName != path.split('/')[path.split('/').length - 1]) {
+            path += "/" + pageName
+        }
+        $.getJSON(path, function (data) {
+            model = data
+            if (document.title != data.app.label) {
+                var name = data.app.name
+                if (data.app.label) {
+                    name = data.app.label
+                }
+                document.title = stripHtml(name)
+                $('.mdl-layout__header').find('h5').html(name)
+                $('#divHeaderPageName').html(name)
+            }
+
+            if (!model.toString().startsWith('<!doctype html>')) {
+                var template = Handlebars.templates['main'](model)
+                updateMainContent(template, true)
+            } else {
+                updateMainContentWithErrorMessage()
+            }
+
+            configPage = model.configPage.name
+            var stateObj = {previousPage: model.configPage.previousPage, currentPage: model.configPage.name}
+            var path = window.location.pathname.split('/')
+            if (path.indexOf(model.configPage.name) > -1) {// && (path[path.length -1] == model.configPage.name || model.configPage.name == undefined)) {
+                //contains page name don't add it
+                path = path.join('/')
+            } else {
+                path = path.join('/') + "/" + model.configPage.name
+                window.history.replaceState(stateObj, "", path)
+            }
+
+            if (parseInt(data.configPage.refreshInterval) > 0) {
+                refreshInterval = setInterval(function () {
+                    log("in refreshInterval")
+                    var path = window.location.pathname.replace('/configure/', '/configure/json/')
+                    if (pageName != "" && pageName != path.split('/')[path.split('/').length - 1]) {
+                        path += "/" + pageName
+                    }
+                    $.getJSON(path, function (data) {
+                        model = data
+                        if (!model.toString().startsWith('<!doctype html>')) {
+                            var template = Handlebars.templates['main'](model)
+                            updateMainContent(template, true)
+                            $('.form').css({'pointer-events': 'unset', 'opacity': '1'})
+                            log(data.configPage.refreshInterval)
+                            if (parseInt(data.configPage.refreshInterval) <= 0) {
+                                clearInterval(refreshInterval)
+                            }
+                        } else {
+                            updateMainContentWithErrorMessage()
+                        }
+                    })
+                    .fail(function (xhr, status, error) {
+                        updateMainContentWithErrorMessage()
+                    })
+                }, parseInt(data.configPage.refreshInterval) * 1000)
+            } else {
+                clearInterval(refreshInterval)
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            if ("" == "true" || urlParams.get('resetScroll') === 'true') {
+                resetAllAppScrollPositions();
+            } else {
+                restoreAppScrollPosition();
+            }
+            focusOnFirstEmptyTextInput();
+            return false;
+        })
+        .fail(function (xhr, status, error) {
+            updateMainContentWithErrorMessage()
+        });
+    });
+
+    var dialogRemoveDevice = document.querySelector('#dialogRemoveDevice');
+    if (!dialogRemoveDevice.showModal) {
+        dialogPolyfill.registerDialog(dialogRemoveDevice);
+    }
+
+    function confirmAndRemoveDevice(deviceId, deletedCallback, cancelledCallback) {
+        globalDeviceId = deviceId;
+        globalDeletedCallback = deletedCallback;
+        globalCancelledCallback = cancelledCallback;
+
+        $.getJSON('/ui/device/confirmDeleteInfo/' + deviceId, function(data) {
+            $('#spanRemoveDeviceName').html(data.name);
+            if (data.appsUsing) {
+                let listItems = [];
+                $.each(data.appsUsing, function(id, dataItem) {
+                    listItems.push('<li>' + dataItem.name + '</li>');
+                });
+                $('#listRemoveDeviceApps').html(listItems.join(''));
+                $('#divRemoveDeviceAppsUsing').show();
+            } else {
+                $('#divRemoveDeviceAppsUsing').hide();
+            }
+        });
+
+        $('#spanRemoveDeviceError').hide();
+        dialogRemoveDevice.showModal();
+        return false;
+    }
+
+    function removeDeviceAndCallback() {
+        $.getJSON('/installedapp/deleteDevice/' + appId + '/' + globalDeviceId, function(data) {
+            if (data.error == false) {
+                dialogRemoveDevice.close();
+                if (globalDeletedCallback) globalDeletedCallback(globalDeviceId);
+            } else {
+                $('#spanRemoveDeviceError').text(data.errorMessage);
+                $('#spanRemoveDeviceError').show();
+            }
+        });
+    }
+
+    function closeRemoveDeviceDialog() {
+        dialogRemoveDevice.close();
+        if (globalCancelledCallback) globalCancelledCallback(globalDeviceId);
+    }
+
+    // custom app dialog
+    var dialogCustomApp = document.querySelector('#dialogCustomApp');
+    if (!dialogCustomApp.showModal) {
+        dialogPolyfill.registerDialog(dialogCustomApp);
+    }
+
+    function applicationDialogButtonClicked(e) {
+        let id = e.target.id;
+        $('#dialogCustomAppActions button').prop('disabled', true);
+        $.get('/installedapp/dialogCallback/' + appId + '/' + encodeURI(id), function() {
+            closeApplicationDialog();
+            jsonSubmit('', '', false);
+        });
+    }
+
+    function showApplicationYesNoDialog(title, content) {
+        return showApplicationDialog(title, content, [{ id: 'buttonYes', title: 'Yes' }, { id: 'buttonNo', title: 'No' }]);
+    }
+
+    function showApplicationDialog(title, content, responses) {
+        if (title) {
+            $('#dialogCustomAppTitle').show();
+        } else {
+            $('#dialogCustomAppTitle').hide();
+        }
+        $('#dialogCustomAppTitle').html(title);
+
+        $('#dialogCustomAppContent').html(content);
+        $('#dialogCustomAppActions').html('');
+
+        responses.forEach(function(buttonDef) {
+            let id = buttonDef.id;
+            let title = buttonDef.title;
+            if (!id) {
+                console.log(`missing id for button definition ${buttonDef}`);
+            } else if (!title) {
+                console.log(`missing title for button definition ${buttonDef}`);
+            } else {
+                let button = $('<button/>')
+                    .attr('id', id).text(title)
+                    .addClass('mdl-button mdl-js-button mdl-button--raised')
+                    .click(applicationDialogButtonClicked);
+
+                $('#dialogCustomAppActions').append(button);
+            }
+        });
+        dialogCustomApp.showModal();
+        $('#dialogCustomAppContent').focus();
+        return false;
+    }
+
+    function closeApplicationDialog() {
+        dialogCustomApp.close();
+    }
+
+    function scrollToMainUIContentTop() {
+        $('#divMainUIContent').animate({ scrollTop: 0 }, 'fast');
+    }
+    </script>

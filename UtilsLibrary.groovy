@@ -1,3 +1,8 @@
+import com.hubitat.app.DeviceWrapper as DeviceWrapper
+import com.hubitat.app.DeviceWrapperList as DeviceWrapperList
+import com.hubitat.hub.domain.Event as Event
+import com.hubitat.hub.domain.Hub as Hub
+
 library (
  name: "UtilsLibrary",
  namespace: "wesmc",

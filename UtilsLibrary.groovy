@@ -114,13 +114,18 @@ String devicesAsHtml(DeviceWrapperList devices) {
 // -----------------------------------------------------
 // A D D   S O L I C I T E D   D A T A   T O   S T A T E
 // -----------------------------------------------------
+
 void addRoomObjToSettings() {
-  // Abstract
-  //   Ask client to select a single room and save the whole room
-  //   object as "state.roomObj".
-  // Design Notes
+  //-----------------------------------------------------------------------
+  // ABSTRACT
+  //   Ask client to select a single room and save the whole room object
+  //   as "state.roomObj". This method must be called from a Hubitat App
+  //   page's section.
+  //
+  // DESIGN NOTES
   //    There may not be an import for defining a RoomWrapper or a
   //    RoomWrapperList.
+  //-----------------------------------------------------------------------
   ArrayList<LinkedHashMap> rooms = app.getRooms()
   List<Map<String, String>> roomPicklist = rooms
     .sort{ it.name }

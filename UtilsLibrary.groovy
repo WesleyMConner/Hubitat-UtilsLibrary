@@ -16,9 +16,9 @@ BLUE = 'rgba(51, 92, 255, 1.0)'
 LIGHT_GREY = 'rgba(180, 180, 180, 1.0)'
 RED = 'rgba(51, 51, 51, 1.0)'
 
-// -------------------------------
-// C L I E N T   I N T E R F A C E
-// -------------------------------
+// ---------------------------------------
+// P A R A G R A P H   F O R M A T T I N G
+// ---------------------------------------
 String heading(String s) {
   HEADING_CSS = "font-size: 2em; font-weight: bold;"
   return """<span style="${HEADING_CSS}">${s}</span>"""
@@ -109,4 +109,32 @@ String devicesAsHtml(DeviceWrapperList devices) {
     ${dataRows}
     </table>
   """
+}
+
+// -----------------------------------------------------
+// A D D   S O L I C I T E D   D A T A   T O   S T A T E
+// -----------------------------------------------------
+void addRoomObjToSettings() {
+  // Abstract
+  //   Ask client to select a single room and save the whole room
+  //   object as "state.roomObj".
+  // Design Notes
+  //    There may not be an import for defining a RoomWrapper or a
+  //    RoomWrapperList.
+  ArrayList<LinkedHashMap> rooms = app.getRooms()
+  List<Map<String, String>> roomPicklist = rooms
+    .sort{ it.name }
+    .collect{ [(it.id.toString()): it.name] }
+  input(
+    name: 'roomId',
+    type: 'enum',
+    title: 'Select the Room',
+    submitOnChange: true,
+    required: true,
+    multiple: false,
+    options: roomPicklist
+  )
+  if (settings.roomId) {
+    state.roomObj = rooms.find{it.id.toString() == settings.roomId}
+  }
 }

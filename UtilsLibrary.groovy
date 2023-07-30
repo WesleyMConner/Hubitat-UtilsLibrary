@@ -19,7 +19,7 @@ library (
 BLACK = 'rgba(0, 0, 0, 1.0)'
 BLUE = 'rgba(51, 92, 255, 1.0)'
 LIGHT_GREY = 'rgba(180, 180, 180, 1.0)'
-RED = 'rgba(51, 51, 51, 1.0)'
+RED = 'rgba(255, 0, 0, 1.0)'
 
 // ---------------------------------------
 // P A R A G R A P H   F O R M A T T I N G
@@ -29,9 +29,19 @@ String heading(String s) {
   return """<span style="${HEADING_CSS}">${s}</span>"""
 }
 
+String important(String s) {
+  IMPORTANT_CSS = "font-size: 1em; color: ${RED};"
+  return """<span style="${IMPORTANT_CSS}">${s}</span>"""
+}
+
 String emphasis(String s) {
-  EMPHASIS_CSS = "font-size: 1.3em; color: ${BLUE}; margin-left: 20px;"
-  return """<br/><span style="${EMPHASIS_CSS}">${s}</span><br/>"""
+  EMPHASIS_CSS = "font-size: 1.3em; color: ${BLUE}; margin-left: 0px;"
+  return """<span style="${EMPHASIS_CSS}">${s}</span>"""
+}
+
+String emphasis2(String s) {
+  EMPHASIS2_CSS = "font-size: 1.1em; color: ${BLUE}; margin-left: 10px;"
+  return """<span style="${EMPHASIS2_CSS}">${s}</span>"""
 }
 
 String normal(String s) {
@@ -40,12 +50,12 @@ String normal(String s) {
 }
 
 String bullet(String s) {
-  BULLET_CSS = "font-size: 1em; margin-left: 20px;"
+  BULLET_CSS = "font-size: 1.1em; margin-left: 10px;"
   return """<span style="${BULLET_CSS}">&#x2022;&nbsp;&nbsp;${s}</span>"""
 }
 
 String comment(String s) {
-  COMMENT_CSS = "font-size: 0.8em; color: ${LIGHT_GREY}"
+  COMMENT_CSS = "font-size: 0.8em; color: ${LIGHT_GREY}; font-style: italic"
   return """<span style="${COMMENT_CSS}">${s}</span>"""
 }
 
@@ -119,32 +129,3 @@ String devicesAsHtml(DeviceWrapperList devices) {
 // -----------------------------------------------------
 // A D D   S O L I C I T E D   D A T A   T O   S T A T E
 // -----------------------------------------------------
-
-void addRoomObjToSettings() {
-  //-----------------------------------------------------------------------
-  // ABSTRACT
-  //   Ask client to select a single room and save the whole room object
-  //   as "state.roomObj". This method must be called from a Hubitat App
-  //   page's section.
-  //
-  // DESIGN NOTES
-  //    There may not be an import for defining a RoomWrapper or a
-  //    RoomWrapperList.
-  //-----------------------------------------------------------------------
-  ArrayList<LinkedHashMap> rooms = app.getRooms()
-  List<Map<String, String>> roomPicklist = rooms
-    .sort{ it.name }
-    .collect{ [(it.id.toString()): it.name] }
-  input(
-    name: 'roomId',
-    type: 'enum',
-    title: 'Select the Room',
-    submitOnChange: true,
-    required: true,
-    multiple: false,
-    options: roomPicklist
-  )
-  if (settings.roomId) {
-    state.roomObj = rooms.find{it.id.toString() == settings.roomId}
-  }
-}

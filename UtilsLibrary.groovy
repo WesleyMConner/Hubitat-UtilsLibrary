@@ -40,7 +40,7 @@ String emphasis(String s) {
 }
 
 String emphasis2(String s) {
-  EMPHASIS2_CSS = "font-size: 1.1em; color: ${BLUE}; margin-left: 10px;"
+  EMPHASIS2_CSS = "font-size: 1.1em; color: ${BLUE}; margin-left: 0px;"
   return """<span style="${EMPHASIS2_CSS}">${s}</span>"""
 }
 

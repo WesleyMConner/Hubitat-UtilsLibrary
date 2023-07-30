@@ -50,7 +50,7 @@ String normal(String s) {
 }
 
 String bullet(String s) {
-  BULLET_CSS = "font-size: 1.1em; margin-left: 10px;"
+  BULLET_CSS = "font-size: 1.0em; margin-left: 10px;"
   return """<span style="${BULLET_CSS}">&#x2022;&nbsp;&nbsp;${s}</span>"""
 }
 

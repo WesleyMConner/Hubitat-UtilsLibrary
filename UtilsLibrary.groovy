@@ -18,7 +18,7 @@ library (
 // -------------
 BLACK = 'rgba(0, 0, 0, 1.0)'
 BLUE = 'rgba(51, 92, 255, 1.0)'
-LIGHT_GREY = 'rgba(180, 180, 180, 1.0)'
+LIGHT_GREY = 'rgba(100, 100, 100, 1.0)'
 RED = 'rgba(255, 0, 0, 1.0)'
 
 // ---------------------------------------
@@ -59,6 +59,52 @@ String comment(String s) {
   return """<span style="${COMMENT_CSS}">${s}</span>"""
 }
 
+String red(String s) {
+  RED_BOLD = "color: ${RED}; font-style: bold"
+  return """<span style="${RED_BOLD}">${s}</span>"""
+}
+
+// -------------------------------------------------------------------
+// C O L L A P S I B L E   I N P U T
+//
+//   Wrap Hubitat input() with a slider (bool) that enables hiding the
+//   input() to declutter the screen.
+//
+//   Default values for all arguments are provided.
+// -------------------------------------------------------------------
+void collapsibleInput (Map args = [:]) {
+  Map _args = [
+        blockLabel: "E R R O R: Missing 'blockLabel'",
+              name: "E R R O R: Missing 'name'",
+             title: "E R R O R: Missing 'title'",
+              type: "E R R O R: Missing 'type'",
+    submitOnChange: true,
+          required: true,
+          multiple: true
+  ] << args
+  String boolSwitchName = "hide${_args.name}"
+  //String toggleTitle =
+  input (
+    name: boolSwitchName,
+    type: 'bool',
+    title: settings[boolSwitchName]
+      ? "Hiding ${_args.blockLabel} (devices=${settings[_args.name].size()})"
+      : "Showing ${_args.blockLabel}",
+    submitOnChange: true,
+    defaultValue: false
+  )
+  if (!settings[boolSwitchName]) {
+    input (
+      name: _args.name,
+      type: _args.type,
+      title: _args.title,
+      submitOnChange: _args.submitOnChange,
+      required: _args.required,
+      multiple: _args.multiple
+    )
+  }
+}
+
 // ---------------------------------------------
 // H T M L   I N S P E C T I O N   M E T H O D S
 // ---------------------------------------------
@@ -92,6 +138,19 @@ String devicesAsHtml(DeviceWrapperList devices) {
   //   - d.getMetaPropertyValues()
   //   = d.type() DOES NOT EXIST
   //   = d.type always null
+  String headerRow = """<tr>
+    <th style='border: 1px solid black' align='center'>Id</th>
+    <th style='border: 1px solid black' align='center'>Display Name</th>
+    <th style='border: 1px solid black' align='center'>Room Id</th>
+    <th style='border: 1px solid black' align='center'>Room Name</th>
+    <th style='border: 1px solid black' align='center'>Supported Attributes</th>
+    <th style='border: 1px solid black' align='center'>Data</th>
+    <th style='border: 1px solid black' align='center'>Current States</th>
+    <th style='border: 1px solid black' align='center'>Supported Commands</th>
+    <th style='border: 1px solid black' align='center'>Parent Device ID</th>
+    <th style='border: 1px solid black' align='center'>Disabled?</th>
+    <th style='border: 1px solid black' align='center'>Type</th>
+  </tr>"""
   String dataRows = settings.devices.collect{d ->
     """<tr>
       <td style='border: 1px solid black' align='center'>${d.id}</td>
@@ -107,23 +166,7 @@ String devicesAsHtml(DeviceWrapperList devices) {
       <td style='border: 1px solid black' align='center'>${d.type}</td>
     </tr>"""
   }.join()
-  return """
-    <table><tr>
-      <th style='border: 1px solid black' align='center'>Id</th>
-      <th style='border: 1px solid black' align='center'>Display Name</th>
-      <th style='border: 1px solid black' align='center'>Room Id</th>
-      <th style='border: 1px solid black' align='center'>Room Name</th>
-      <th style='border: 1px solid black' align='center'>Supported Attributes</th>
-      <th style='border: 1px solid black' align='center'>Data</th>
-      <th style='border: 1px solid black' align='center'>Current States</th>
-      <th style='border: 1px solid black' align='center'>Supported Commands</th>
-      <th style='border: 1px solid black' align='center'>Parent Device ID</th>
-      <th style='border: 1px solid black' align='center'>Disabled?</th>
-      <th style='border: 1px solid black' align='center'>Type</th>
-    </tr>
-    ${dataRows}
-    </table>
-  """
+  return "<table>${headerRow}${dataRows}</table>"
 }
 
 // -----------------------------------------------------

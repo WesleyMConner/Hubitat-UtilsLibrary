@@ -20,11 +20,11 @@ import com.hubitat.hub.domain.Event as Event
 import com.hubitat.hub.domain.Hub as Hub
 
 library (
- name: "UtilsLibrary",
- namespace: "wesmc",
+ name: 'UtilsLibrary',
+ namespace: 'wesmc',
  author: 'WesleyMConner',
- description: "General-Purpose Methods that are Reusable across Hubitat Projects",
- category: "general purpose",
+ description: 'General-Purpose Methods that are Reusable across Hubitat Projects',
+ category: 'general purpose',
  documentationLink: 'https://github.com/WesleyMConner/Hubitat-UtilsLibrary/README.adoc',
  importUrl: 'https://github.com/WesleyMConner/Hubitat-UtilsLibrary.git'
 )
@@ -41,7 +41,7 @@ RED = 'rgba(255, 0, 0, 1.0)'
 // P A R A G R A P H   F O R M A T T I N G
 // ---------------------------------------
 String heading(String s) {
-  HEADING_CSS = "font-size: 2em; font-weight: bold;"
+  HEADING_CSS = 'font-size: 2em; font-weight: bold;'
   return """<span style="${HEADING_CSS}">${s}</span>"""
 }
 
@@ -61,12 +61,12 @@ String emphasis2(String s) {
 }
 
 String normal(String s) {
-  NORMAL_CSS = "font-size: 1.1em;"
+  NORMAL_CSS = 'font-size: 1.1em;'
   return """<span style="${NORMAL_CSS}">${s}</span>"""
 }
 
 String bullet(String s) {
-  BULLET_CSS = "font-size: 1.0em; margin-left: 10px;"
+  BULLET_CSS = 'font-size: 1.0em; margin-left: 10px;'
   return """<span style="${BULLET_CSS}">&#x2022;&nbsp;&nbsp;${s}</span>"""
 }
 

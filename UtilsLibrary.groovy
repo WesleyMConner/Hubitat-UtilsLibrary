@@ -96,18 +96,22 @@ void collapsibleInput (Map args = [:]) {
               type: "E R R O R: Missing 'type'",
     submitOnChange: true,
           required: true,
-          multiple: true
+          multiple: true,
+           options: null
   ] << args
   String boolSwitchName = "hide${_args.name}"
   //String toggleTitle =
+  String devices = settings[_args.name]
+    ? "(devices=${settings[_args.name].size()})"
+    : ''
   input (
     name: boolSwitchName,
     type: 'bool',
     title: settings[boolSwitchName]
-      ? "Hiding ${_args.blockLabel} (devices=${settings[_args.name].size()})"
+      ? "Hiding ${_args.blockLabel} ${devices}"
       : "Showing ${_args.blockLabel}",
     submitOnChange: true,
-    defaultValue: false
+    defaultValue: false,
   )
   if (!settings[boolSwitchName]) {
     input (
@@ -116,7 +120,8 @@ void collapsibleInput (Map args = [:]) {
       title: _args.title,
       submitOnChange: _args.submitOnChange,
       required: _args.required,
-      multiple: _args.multiple
+      multiple: _args.multiple,
+      options: _args.options
     )
   }
 }

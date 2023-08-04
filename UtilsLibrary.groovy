@@ -190,6 +190,60 @@ String devicesAsHtml(DeviceWrapperList devices) {
   return "<table>${headerRow}${dataRows}</table>"
 }
 
+void logEventDetails (Event e, Boolean errorMode = false) {
+  //if (settings.LOG || errorMode) {
+    String rows = """
+      <tr>
+        <th align='right'>descriptionText</th>
+        <td>${e.descriptionText}</td>
+      </tr>
+      <tr>
+        <th align='right'>deviceId</th>
+        <td>${e.deviceId}</td>
+      </tr>
+      <tr>
+        <th align='right'>displayName</th>
+        <td>${e.displayName}</td>
+      </tr>
+    """
+    if (errorMode) {
+      rows += """
+        <tr>
+          <th align='right'>isStateChange</th>
+          <td>${e.isStateChange}</td>
+        </tr>
+        <tr>
+          <th align='right'>date</th>
+          <td>${e.date}</td>
+        </tr>
+        <tr>
+          <th align='right'>class</th>
+          <td>${e.class}</td>
+        </tr>
+        <tr>
+          <th align='right'>unixTime</th>
+          <td>${e.unixTime}</td>
+        </tr>
+        <tr>
+          <th align='right'>name</th>
+          <td>${e.name}</td>
+        </tr>
+        <tr>
+          <th align='right'>value</th>
+          <td>${e.value}</td>
+        </tr>
+      """
+      log.error """Unexpected event in ${calledBy}:<br/>
+        Received an event that IS NOT a state change.<br/>
+        <table>${rows}</table>
+      """
+    } else {
+      log.trace """Event highlights from ${calledBy}:<br/>
+      <table>${rows}</table>"""
+    }
+  //}
+}
+
 // -----------------------------------------------------
 // A D D   S O L I C I T E D   D A T A   T O   S T A T E
 // -----------------------------------------------------

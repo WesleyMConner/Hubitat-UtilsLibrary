@@ -13,3 +13,4 @@ ignorePaths:
   - node_modules/
   - package.json
 words:
+  - hubitat

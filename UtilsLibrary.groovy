@@ -173,16 +173,16 @@ LinkedHashMap<String, InstAppW> keepOldestAppObjPerAppLabel (Boolean LOG = false
   // are deleted and a Label-to-App Map is returned for the surviving Apps.
   LinkedHashMap<String, InstAppW> result = [:]
   getAllChildApps().groupBy{ app -> app.getLabel() }.each{ label, appObjs ->
-    if (LOG) log.trace(
+    if (settings.LOG) log.trace(
       "keepOldestAppObjPerAppLabel() <b>${label}</b> -> ${getInfoForApps(appObjs)}"
     )
     appObjs.sort{}.reverse().eachWithIndex{ appObj, index ->
       if (index == 0) {
-        if (LOG) log.trace "keepOldestAppObjPerAppLabel() keeping '${getAppInfo(appObj)}')"
+        if (settings.LOG) log.trace "keepOldestAppObjPerAppLabel() keeping '${getAppInfo(appObj)}')"
         result << Map.of(label, appObj)
       }
       else {
-        if (LOG) log.trace "keepOldestAppObjPerAppLabel() deleting '${getAppInfo(appObj)}')"
+        if (settings.LOG) log.trace "keepOldestAppObjPerAppLabel() deleting '${getAppInfo(appObj)}')"
         deleteChildApp(appObj.getId())
       }
     }
@@ -214,16 +214,16 @@ LinkedHashMap<String, DevW> keepOldestDevicePerDeviceLabel (Boolean LOG = false)
   // are deleted and a Label-to-App Map is returned for the surviving Apps.
   LinkedHashMap<String, InstAppW> result = [:]
   getAllChildApps().groupBy{ app -> app.getLabel() }.each{ label, appObjs ->
-    if (LOG) log.trace(
+    if (settings.LOG) log.trace(
       "keepOldestAppObjPerAppLabel() <b>${label}</b> -> ${getInfoForApps(appObjs)}"
     )
     appObjs.sort{}.reverse().eachWithIndex{ appObj, index ->
       if (index == 0) {
-        if (LOG) log.trace "keepOldestAppObjPerAppLabel() keeping '${getAppInfo(appObj)}')"
+        if (settings.LOG) log.trace "keepOldestAppObjPerAppLabel() keeping '${getAppInfo(appObj)}')"
         result << Map.of(label, appObj)
       }
       else {
-        if (LOG) log.trace "keepOldestAppObjPerAppLabel() deleting '${getAppInfo(appObj)}')"
+        if (settings.LOG) log.trace "keepOldestAppObjPerAppLabel() deleting '${getAppInfo(appObj)}')"
         deleteChildApp(appObj.getId())
       }
     }

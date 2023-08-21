@@ -1,7 +1,7 @@
-def OldTestPage() {
+void OldTestPage() {
 
-// def d = new Date()
-// def t = now()
+// Date d = new Date()
+// long t = now()
 // long d_asLong = d.getTime()
 
 // long tSeconds = t / 1000
@@ -19,11 +19,11 @@ def OldTestPage() {
   state.soeToday = timeToday(state.soeHMS, Loc.timeZone)
   state.sonToday = timeToday(state.sonHMS, Loc.timeZone)
 
-  def d1 = timeToday("4:00", Loc.timeZone)
-  def d2 = timeToday("11:00", Loc.timeZone)
-  def d3 = timeToday("17:00", Loc.timeZone)
-  def d4 = timeToday("19:00", Loc.timeZone)
-  def d5 = timeToday("23:30", Loc.timeZone)
+  Date d1 = timeToday("4:00", Loc.timeZone)
+  Date d2 = timeToday("11:00", Loc.timeZone)
+  Date d3 = timeToday("17:00", Loc.timeZone)
+  Date d4 = timeToday("19:00", Loc.timeZone)
+  Date d5 = timeToday("23:30", Loc.timeZone)
 
   //if (sodToday < d) {sodDate = sodDate + 1}
 
@@ -68,13 +68,13 @@ def OldTestPage() {
   }
 }
 
-def isNight(d) {
+Boolean isNight(d) {
   return (
     (state.sonToday - 1 <= d) && (d < state.sodToday)
     || (state.sonToday <= d) && (d < state.sodToday + 1)
   )
 }
 
-def isEvening(d) {
+Boolean isEvening(d) {
   return (state.soeToday <= d) && (d < state.sonToday)
 }

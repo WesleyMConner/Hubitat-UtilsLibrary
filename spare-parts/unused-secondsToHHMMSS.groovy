@@ -1,4 +1,4 @@
-def convertSecondsToHHMMSS(milliseconds) {
+String convertSecondsToHHMMSS(milliseconds) {
   long seconds = milliseconds / 1000
   long s = seconds % 60;
   long m = (seconds / 60) % 60;

@@ -15,7 +15,6 @@
 // limitations under the License.
 // ---------------------------------------------------------------------------------
 import com.hubitat.app.DeviceWrapper as DevW
-import com.hubitat.app.DeviceWrapperList as DevWL
 import com.hubitat.app.InstalledAppWrapper as InstAppW
 import com.hubitat.hub.domain.Event as Event
 import com.hubitat.hub.domain.Hub as Hub
@@ -265,7 +264,7 @@ String roomsAsHtml(ArrayList<LinkedHashMap> rooms) {
   """
 }
 
-String devicesAsHtml(DevWL devices) {
+String devicesAsHtml(List<DevW> devices) {
   // Not helpful
   //   - d.getMetaPropertyValues()
   //   = d.type() DOES NOT EXIST

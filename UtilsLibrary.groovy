@@ -203,15 +203,6 @@ String deviceTag(def device) {
   return device ? "${device.displayName} (${device.id})" : null
 }
 
-// Note: getDeviceInfo() chokes if arg is 'DevW device'.
-String getDeviceInfo (def d) {
-  return d ? "${d.displayName} (${d.id})" : "null"
-}
-
-String getInfoForDevices (List<DevW> devices, String joinText = ', ') {
-  return devices.collect{ getDeviceInfo(it) }.join(joinText)
-}
-
 /*
 LinkedHashMap<String, DevW> keepOldestDevicePerDeviceLabel (Boolean LOG = false) {
   // This method de-dups Child Devices with the same App Label. Older App Ids

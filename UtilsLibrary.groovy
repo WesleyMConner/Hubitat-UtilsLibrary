@@ -333,8 +333,7 @@ void logEventDetails (Event e, Boolean DEEP = false) {
       <th align='right'>unixTime</th>
       <td>${e.unixTime}</td>
     </tr>"""
-  log.trace """Event highlights from ${calledBy}:<br/>
-  <table>${rows}</table>"""
+  log.trace "<table>${rows}</table>"
 }
 
 // -----------------------------------------------------

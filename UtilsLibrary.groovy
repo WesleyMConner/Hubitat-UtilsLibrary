@@ -114,24 +114,26 @@ void collapsibleInput (Map args = [:]) {
           multiple: true,
            options: null
   ] << args
-  String boolSwitchName = "Hide${_args.name}"
+  String boolHideInput = "Hide${_args.name}"
   //String toggleTitle =
   String devices = settings[_args.name]
     ? "(devices=${settings[_args.name].size()})"
     : ''
   input (
-    name: boolSwitchName,
+    name: boolHideInput,
     type: 'bool',
-    title: settings[boolSwitchName]
+    // width: settings[boolHideInput] ? 12 : 6,
+    title: settings[boolHideInput]
       ? "Hiding ${_args.blockLabel} ${devices}"
       : "Showing ${_args.blockLabel}",
     submitOnChange: true,
     defaultValue: false,
   )
-  if (!settings[boolSwitchName]) {
+  if (!settings[boolHideInput]) {
     input (
       name: _args.name,
       type: _args.type,
+      // width: 6,
       title: _args.title,
       submitOnChange: _args.submitOnChange,
       required: _args.required,
@@ -197,11 +199,12 @@ InstAppW getAppByLabel(
   return childPerLabel.find{ k, v -> k == label }?.value
 }
 
-String getDeviceInfo (DevW d) {
-  String parentApp = d.parentAppId
-    ? " w/ parentApp: ${getAppInfo(getChildAppById(d.parentAppId))}"
-    : ''
-  return "${d.displayName} (${d.id})${parentApp}"
+String deviceTag(def device) {
+  return device ? "${device.displayName} (${device.id})" : null
+}
+
+String getDeviceInfo (def d) {
+  return d ? "${d.displayName} (${d.id})" : "null"
 }
 
 String getInfoForDevices (List<DevW> devices, String joinText = ', ') {
@@ -296,58 +299,47 @@ String devicesAsHtml(DevWL devices) {
   return "<table>${headerRow}${dataRows}</table>"
 }
 
-void logEventDetails (Event e, Boolean LOG = false, Boolean DEEP = false) {
-  if (LOG || DEEP) {
-    String rows = """
-      <tr>
-        <th align='right'>descriptionText</th>
-        <td>${e.descriptionText}</td>
-      </tr>
-      <tr>
-        <th align='right'>deviceId</th>
-        <td>${e.deviceId}</td>
-      </tr>
-      <tr>
-        <th align='right'>displayName</th>
-        <td>${e.displayName}</td>
-      </tr>
-    """
-    if (DEEP) {
-      rows += """
-        <tr>
-          <th align='right'>isStateChange</th>
-          <td>${e.isStateChange}</td>
-        </tr>
-        <tr>
-          <th align='right'>date</th>
-          <td>${e.date}</td>
-        </tr>
-        <tr>
-          <th align='right'>class</th>
-          <td>${e.class}</td>
-        </tr>
-        <tr>
-          <th align='right'>unixTime</th>
-          <td>${e.unixTime}</td>
-        </tr>
-        <tr>
-          <th align='right'>name</th>
-          <td>${e.name}</td>
-        </tr>
-        <tr>
-          <th align='right'>value</th>
-          <td>${e.value}</td>
-        </tr>
-      """
-      log.error """Unexpected event in ${calledBy}:<br/>
-        Received an event that IS NOT a state change.<br/>
-        <table>${rows}</table>
-      """
-    } else {
-      log.trace """Event highlights from ${calledBy}:<br/>
-      <table>${rows}</table>"""
-    }
-  }
+void logEventDetails (Event e, Boolean DEEP = false) {
+  String rows = """
+    <tr>
+      <th align='right'>descriptionText</th>
+      <td>${e.descriptionText}</td>
+    </tr>
+    <tr>
+      <th align='right'>displayName</th>
+      <td>${e.displayName}</td>
+    </tr>
+    <tr>
+      <th align='right'>deviceId</th>
+      <td>${e.deviceId}</td>
+    </tr>
+    <tr>
+      <th align='right'>name</th>
+      <td>${e.name}</td>
+    </tr>
+    <tr>
+      <th align='right'>value</th>
+      <td>${e.value}</td>
+    </tr>"""
+  if (DEEP) rows += """
+    <tr>
+      <th align='right'>isStateChange</th>
+      <td>${e.isStateChange}</td>
+    </tr>
+    <tr>
+      <th align='right'>date</th>
+      <td>${e.date}</td>
+    </tr>
+    <tr>
+      <th align='right'>class</th>
+      <td>${e.class}</td>
+    </tr>
+    <tr>
+      <th align='right'>unixTime</th>
+      <td>${e.unixTime}</td>
+    </tr>"""
+  log.trace """Event highlights from ${calledBy}:<br/>
+  <table>${rows}</table>"""
 }
 
 // -----------------------------------------------------

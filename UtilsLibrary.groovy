@@ -199,10 +199,12 @@ InstAppW getAppByLabel(
   return childPerLabel.find{ k, v -> k == label }?.value
 }
 
+// Note: deviceTag() chokes if arg is 'DevW device'.
 String deviceTag(def device) {
   return device ? "${device.displayName} (${device.id})" : null
 }
 
+// Note: getDeviceInfo() chokes if arg is 'DevW device'.
 String getDeviceInfo (def d) {
   return d ? "${d.displayName} (${d.id})" : "null"
 }

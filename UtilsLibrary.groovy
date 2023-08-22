@@ -83,10 +83,10 @@ String red(String s) {
 // -------------------------------------------------------------------
 // T B D
 // -------------------------------------------------------------------
-void solicitLOG () {
-  Boolean currentValue = settings.LOG ?: true
+void solicitLog () {
+  Boolean currentValue = settings.log ?: true
   input (
-    name: 'LOG',
+    name: 'log',
     type: 'bool',
     title: "${currentValue ? 'Logging ENABLED' : 'Logging DISABLED'}",
     defaultValue: currentValue,
@@ -113,7 +113,7 @@ void collapsibleInput (Map args = [:]) {
           multiple: true,
            options: null
   ] << args
-  String boolHideInput = "Hide${_args.name}"
+  String boolHideInput = "hide${_args.name}"
   //String toggleTitle =
   String devices = settings[_args.name]
     ? "(devices=${settings[_args.name].size()})"
@@ -169,21 +169,21 @@ String getInfoForApps (List<InstAppW> appObjs, String joinText = ', ') {
   return appObjs.collect{ getAppInfo(it) }.join(joinText)
 }
 
-LinkedHashMap<String, InstAppW> keepOldestAppObjPerAppLabel (Boolean LOG = false) {
+LinkedHashMap<String, InstAppW> keepOldestAppObjPerAppLabel () {
   // This method de-dups Child Apps with the same App Label. Older App Ids
   // are deleted and a Label-to-App Map is returned for the surviving Apps.
   LinkedHashMap<String, InstAppW> result = [:]
-  getAllChildApps().groupBy{ app -> app.getLabel() }.each{ label, appObjs ->
-    if (settings.LOG) log.trace(
+  getAllChildApps()?.groupBy{ app -> app.getLabel() }.each{ label, appObjs ->
+    if (settings.log) log.trace(
       "keepOldestAppObjPerAppLabel() <b>${label}</b> -> ${getInfoForApps(appObjs)}"
     )
     appObjs.sort{}.reverse().eachWithIndex{ appObj, index ->
       if (index == 0) {
-        if (settings.LOG) log.trace "keepOldestAppObjPerAppLabel() keeping '${getAppInfo(appObj)}')"
+        if (settings.log) log.trace "keepOldestAppObjPerAppLabel() keeping '${getAppInfo(appObj)}')"
         result << Map.of(label, appObj)
       }
       else {
-        if (settings.LOG) log.trace "keepOldestAppObjPerAppLabel() deleting '${getAppInfo(appObj)}')"
+        if (settings.log) log.trace "keepOldestAppObjPerAppLabel() deleting '${getAppInfo(appObj)}')"
         deleteChildApp(appObj.getId())
       }
     }
@@ -207,21 +207,21 @@ String deviceTag(def device) {
 }
 
 /*
-LinkedHashMap<String, DevW> keepOldestDevicePerDeviceLabel (Boolean LOG = false) {
+LinkedHashMap<String, DevW> keepOldestDevicePerDeviceLabel () {
   // This method de-dups Child Devices with the same App Label. Older App Ids
   // are deleted and a Label-to-App Map is returned for the surviving Apps.
   LinkedHashMap<String, InstAppW> result = [:]
   getAllChildApps().groupBy{ app -> app.getLabel() }.each{ label, appObjs ->
-    if (settings.LOG) log.trace(
+    if (settings.log) log.trace(
       "keepOldestAppObjPerAppLabel() <b>${label}</b> -> ${getInfoForApps(appObjs)}"
     )
     appObjs.sort{}.reverse().eachWithIndex{ appObj, index ->
       if (index == 0) {
-        if (settings.LOG) log.trace "keepOldestAppObjPerAppLabel() keeping '${getAppInfo(appObj)}')"
+        if (settings.log) log.trace "keepOldestAppObjPerAppLabel() keeping '${getAppInfo(appObj)}')"
         result << Map.of(label, appObj)
       }
       else {
-        if (settings.LOG) log.trace "keepOldestAppObjPerAppLabel() deleting '${getAppInfo(appObj)}')"
+        if (settings.log) log.trace "keepOldestAppObjPerAppLabel() deleting '${getAppInfo(appObj)}')"
         deleteChildApp(appObj.getId())
       }
     }

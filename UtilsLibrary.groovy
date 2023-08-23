@@ -175,15 +175,15 @@ LinkedHashMap<String, InstAppW> keepOldestAppObjPerAppLabel () {
   LinkedHashMap<String, InstAppW> result = [:]
   getAllChildApps()?.groupBy{ app -> app.getLabel() }.each{ label, appObjs ->
     if (settings.log) log.trace(
-      "keepOldestAppObjPerAppLabel() <b>${label}</b> -> ${getInfoForApps(appObjs)}"
+      "UTILS-keepOldestAppObjPerAppLabel() <b>${label}</b> -> ${getInfoForApps(appObjs)}"
     )
     appObjs.sort{}.reverse().eachWithIndex{ appObj, index ->
       if (index == 0) {
-        if (settings.log) log.trace "keepOldestAppObjPerAppLabel() keeping '${getAppInfo(appObj)}')"
+        if (settings.log) log.trace "UTILS-keepOldestAppObjPerAppLabel() keeping '${getAppInfo(appObj)}')"
         result << Map.of(label, appObj)
       }
       else {
-        if (settings.log) log.trace "keepOldestAppObjPerAppLabel() deleting '${getAppInfo(appObj)}')"
+        if (settings.log) log.trace "UTILS-keepOldestAppObjPerAppLabel() deleting '${getAppInfo(appObj)}')"
         deleteChildApp(appObj.getId())
       }
     }
@@ -205,30 +205,6 @@ InstAppW getAppByLabel(
 String deviceTag(def device) {
   return device ? "${device.displayName} (${device.id})" : null
 }
-
-/*
-LinkedHashMap<String, DevW> keepOldestDevicePerDeviceLabel () {
-  // This method de-dups Child Devices with the same App Label. Older App Ids
-  // are deleted and a Label-to-App Map is returned for the surviving Apps.
-  LinkedHashMap<String, InstAppW> result = [:]
-  getAllChildApps().groupBy{ app -> app.getLabel() }.each{ label, appObjs ->
-    if (settings.log) log.trace(
-      "keepOldestAppObjPerAppLabel() <b>${label}</b> -> ${getInfoForApps(appObjs)}"
-    )
-    appObjs.sort{}.reverse().eachWithIndex{ appObj, index ->
-      if (index == 0) {
-        if (settings.log) log.trace "keepOldestAppObjPerAppLabel() keeping '${getAppInfo(appObj)}')"
-        result << Map.of(label, appObj)
-      }
-      else {
-        if (settings.log) log.trace "keepOldestAppObjPerAppLabel() deleting '${getAppInfo(appObj)}')"
-        deleteChildApp(appObj.getId())
-      }
-    }
-  }
-  return result
-}
-*/
 
 // ---------------------------------------------
 // H T M L   I N S P E C T I O N   M E T H O D S
@@ -333,7 +309,7 @@ void logEventDetails (Event e, Boolean DEEP = false) {
       <th align='right'>unixTime</th>
       <td>${e.unixTime}</td>
     </tr>"""
-  log.trace "<table>${rows}</table>"
+  log.trace "UTILS-logEventDetails()<br/><table>${rows}</table>"
 }
 
 // -----------------------------------------------------

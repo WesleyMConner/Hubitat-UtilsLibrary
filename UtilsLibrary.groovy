@@ -175,15 +175,15 @@ LinkedHashMap<String, InstAppW> keepOldestAppObjPerAppLabel () {
   LinkedHashMap<String, InstAppW> result = [:]
   getAllChildApps()?.groupBy{ app -> app.getLabel() }.each{ label, appObjs ->
     if (settings.log) log.trace(
-      "UTILS-keepOldestAppObjPerAppLabel() <b>${label}</b> -> ${getInfoForApps(appObjs)}"
+      "UTILS keepOldestAppObjPerAppLabel() <b>${label}</b> -> ${getInfoForApps(appObjs)}"
     )
     appObjs.sort{}.reverse().eachWithIndex{ appObj, index ->
       if (index == 0) {
-        if (settings.log) log.trace "UTILS-keepOldestAppObjPerAppLabel() keeping '${getAppInfo(appObj)}')"
+        if (settings.log) log.trace "UTILS keepOldestAppObjPerAppLabel() keeping '${getAppInfo(appObj)}')"
         result << Map.of(label, appObj)
       }
       else {
-        if (settings.log) log.trace "UTILS-keepOldestAppObjPerAppLabel() deleting '${getAppInfo(appObj)}')"
+        if (settings.log) log.trace "UTILS keepOldestAppObjPerAppLabel() deleting '${getAppInfo(appObj)}')"
         deleteChildApp(appObj.getId())
       }
     }
@@ -291,12 +291,13 @@ void logEventDetails (Event e, Boolean DEEP = false) {
     <tr>
       <th align='right'>value</th>
       <td>${e.value}</td>
-    </tr>"""
-  if (DEEP) rows += """
+    </tr>
     <tr>
       <th align='right'>isStateChange</th>
       <td>${e.isStateChange}</td>
     </tr>
+    """
+  if (DEEP) rows += """
     <tr>
       <th align='right'>date</th>
       <td>${e.date}</td>
@@ -309,7 +310,7 @@ void logEventDetails (Event e, Boolean DEEP = false) {
       <th align='right'>unixTime</th>
       <td>${e.unixTime}</td>
     </tr>"""
-  log.trace "UTILS-logEventDetails()<br/><table>${rows}</table>"
+  log.trace "UTILS logEventDetails()<br/><table>${rows}</table>"
 }
 
 // -----------------------------------------------------

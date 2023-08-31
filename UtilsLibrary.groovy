@@ -191,18 +191,12 @@ LinkedHashMap<String, InstAppW> keepOldestAppObjPerAppLabel () {
   return result
 }
 
-InstAppW getAppByLabel(
-  LinkedHashMap<String, InstAppW> childPerLabel,
-  String label
-) {
-  return childPerLabel.find{ k, v -> k == label }?.value
-}
-
-// Note: For deviceTag(), 'def' is used in lieu of 'DevW'. When devices
-//       are used from a LinkedHashMap (e.g., settings, state), the
-//       original DevW type is lost - resulting in method call fail that
-//       reports a type mismatch.
 String deviceTag(def device) {
+  // Design Note:
+  //   - The parameter is passed as 'def' in lieu of 'DevW'.
+  //   - When devices are used from a LinkedHashMap (e.g., settings, state),
+  //     the original DevW type is lost - resulting in method call fail that
+  //     reports a type mismatch.
   return device ? "${device.displayName} (${device.id})" : null
 }
 

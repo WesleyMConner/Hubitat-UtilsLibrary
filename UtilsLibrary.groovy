@@ -157,6 +157,71 @@ String displayState() {
   ].join('<br/>')
 }
 
+void selectLedsForListItems(
+  List<String> list,
+  List<DevW> ledDevices,
+  String prefix
+  ) {
+  // Design Note
+  //   Keypad LEDs are used as a proxy for Keypad buttons.
+  //     - The button's displayName is meaningful to clients.
+  //     - The button's deviceNetworkId is <KPAD DNI> hyphen <BUTTON #>
+  if (list == null || ledDevices == null) {
+    paragraph(red(
+      'Mode activation buttons are pending pre-requisites above.'
+    ))
+  } else {
+    list.each{ item ->
+      input(
+        name: "${prefix}_${item}",
+        type: 'enum',
+        width: 6,
+        title: emphasis("Buttons/LEDs activating '${item}'"),
+        submitOnChange: true,
+        required: false,
+        multiple: true,
+        options: ledDevices.collect{ d ->
+          "${d.displayName}: ${d.deviceNetworkId}"
+        }?.sort()
+      )
+    }
+  }
+}
+
+void mapKpadDNIandButtonToItem (String prefix) {
+  // Design Note
+  //   The Keypad LEDs collected by selectForMode() function as a proxy for
+  //   Keypad button presses. Settings data includes the user-friendly
+  //   LED displayName and the LED device ID, which is comprised of 'Keypad
+  //   Device Id' and 'Button Number', concatenated with a hyphen. This
+  //   method populates "state.[<KPAD DNI>]?.[<KPAD Button #>] = mode".
+  state.kpadButtons = [:]
+  // Sample Settings Data
+  //     key: LEDs_Day,
+  //   value: [Central KPAD 2 - DAY: 5953-2]
+  //           ^User-Friendly Name
+  //                                 ^Keypad DNI
+  //                                      ^Keypad Button Number
+  // The 'value' is first parsed into a list with two components:
+  //   - User-Friendly Name
+  //   - Button DNI               [The last() item in the parsed list.]
+  // The Button DNI is further parsed into a list with two components:
+  //   - Keypad DNI
+  //   - Keypad Button number
+  settings.each{ key, value ->
+    if (key.contains("${prefix}_")) {
+      String mode = key.minus("${prefix}_")
+      value.each{ item ->
+        List<String> kpadDniAndButton = item?.tokenize(' ')?.last()?.tokenize('-')
+        if (kpadDniAndButton.size() == 2 && mode) {
+          if (!state.kpadButtons[kpadDniAndButton[0]]) state.kpadButtons[kpadDniAndButton[0]] = [:]
+          state.kpadButtons[kpadDniAndButton[0]][kpadDniAndButton[1]] = mode
+        }
+      }
+    }
+  }
+}
+
 // -----------------------------------
 // E X T E N D   H U B I T A T   A P I
 // -----------------------------------
@@ -169,26 +234,44 @@ String getInfoForApps (List<InstAppW> appObjs, String joinText = ', ') {
   return appObjs.collect{ getAppInfo(it) }.join(joinText)
 }
 
-LinkedHashMap<String, InstAppW> keepOldestAppObjPerAppLabel () {
-  // This method de-dups Child Apps with the same App Label. Older App Ids
-  // are deleted and a Label-to-App Map is returned for the surviving Apps.
-  LinkedHashMap<String, InstAppW> result = [:]
+void keepOldestAppObjPerAppLabel (List<String> keepLabels, Boolean LOG = false) {
+  // De-dups Child Apps by App Label by removing older (lower-valued) App Ids.
+  //-- TESTING->  Deliberately create noise for testing dups:
+  //-- TESTING->    addChildApp('wesmc', 'whaRoom', 'Kitchen')
+  //-- TESTING->    addChildApp('wesmc', 'whaRoom', 'Den')
+  //-- TESTING->    addChildApp('wesmc', 'whaRoom', 'Kitchen')
+  //-- TESTING->    addChildApp('wesmc', 'whaRoom', 'Puppies')
+  //-- TESTING->    addChildApp('wesmc', 'modePBSG', 'Butterflies')
+  /*
+  addChildApp('wesmc', 'whaRoom', 'Kitchen')
+  addChildApp('wesmc', 'whaRoom', 'Den')
+  addChildApp('wesmc', 'whaRoom', 'Kitchen')
+  addChildApp('wesmc', 'whaRoom', 'Puppies')
+  addChildApp('wesmc', 'modePBSG', 'Butterflies')
+  */
   getAllChildApps()?.groupBy{ app -> app.getLabel() }.each{ label, appObjs ->
-    if (settings.log) log.trace(
-      "UTILS keepOldestAppObjPerAppLabel() <b>${label}</b> -> ${getInfoForApps(appObjs)}"
+    if (LOG) log.trace(
+      "UTILS keepOldestAppObjPerAppLabelv2()<br/>"
+      + "label: ${label}<br/>"
+      + "keepLabels: ${keepLabels}<br/>"
+      + "keepLabels.contains(label): ${keepLabels.contains(label)}"
     )
-    appObjs.sort{}.reverse().eachWithIndex{ appObj, index ->
-      if (index == 0) {
-        if (settings.log) log.trace "UTILS keepOldestAppObjPerAppLabel() keeping '${getAppInfo(appObj)}')"
-        result << Map.of(label, appObj)
+    if (keepLabels.contains(label)) {
+      appObjs.sort{}.reverse().eachWithIndex{ appObj, index ->
+        if (index == 0) {
+          if (LOG) log.trace "UTILS keepOldestAppObjPerAppLabelv2() keeping newer '${getAppInfo(appObj)}'"
+        } else {
+          if (LOG) log.trace "UTILS keepOldestAppObjPerAppLabelv2() deleting older '${getAppInfo(appObj)}'"
+          deleteChildApp(appObj.getId())
+        }
       }
-      else {
-        if (settings.log) log.trace "UTILS keepOldestAppObjPerAppLabel() deleting '${getAppInfo(appObj)}')"
+    } else {
+      appObjs.each{ appObj ->
+        if (LOG) log.trace "UTILS keepOldestAppObjPerAppLabelv2() deleting orphaned '${getAppInfo(appObj)}')"
         deleteChildApp(appObj.getId())
       }
     }
   }
-  return result
 }
 
 String deviceTag(def device) {

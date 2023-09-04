@@ -94,55 +94,6 @@ void solicitLog () {
   )
 }
 
-// -------------------------------------------------------------------
-// C O L L A P S I B L E   I N P U T
-//
-//   Wrap Hubitat input() with a slider (bool) that enables hiding the
-//   input() to declutter the screen.
-//
-//   Default values for all arguments are provided.
-// -------------------------------------------------------------------
-void collapsibleInput (Map args = [:]) {
-  Map _args = [
-        blockLabel: "E R R O R: Missing 'blockLabel'",
-              name: "E R R O R: Missing 'name'",
-             title: "E R R O R: Missing 'title'",
-              type: "E R R O R: Missing 'type'",
-    submitOnChange: true,
-          required: true,
-          multiple: true,
-           options: null
-  ] << args
-  String boolHideInput = "hide${_args.name}"
-  //String toggleTitle =
-  String devices = settings[_args.name]
-    ? "(devices=${settings[_args.name].size()})"
-    : ''
-  input (
-    name: boolHideInput,
-    type: 'bool',
-    // width: settings[boolHideInput] ? 12 : 6,
-    title: settings[boolHideInput]
-      ? "Hiding ${_args.blockLabel} ${devices}"
-      : "Showing ${_args.blockLabel}",
-    submitOnChange: true,
-    defaultValue: false,
-  )
-  if (!settings[boolHideInput]) {
-    input (
-      name: _args.name,
-      type: _args.type,
-      // width: 6,
-      title: _args.title,
-      submitOnChange: _args.submitOnChange,
-      required: _args.required,
-      multiple: _args.multiple,
-      width: _args.width,
-      options: _args.options
-    )
-  }
-}
-
 String displaySettings() {
   [
     '<b>SETTINGS</b>',
@@ -155,37 +106,6 @@ String displayState() {
     '<b>STATE</b>',
     state.sort().collect{ k, v -> bullet("<b>${k}</b> → ${v}") }.join('<br/>')
   ].join('<br/>')
-}
-
-void selectLedsForListItems(
-  List<String> list,
-  List<DevW> ledDevices,
-  String prefix
-  ) {
-  // Design Note
-  //   Keypad LEDs are used as a proxy for Keypad buttons.
-  //     - The button's displayName is meaningful to clients.
-  //     - The button's deviceNetworkId is <KPAD DNI> hyphen <BUTTON #>
-  if (list == null || ledDevices == null) {
-    paragraph(red(
-      'Mode activation buttons are pending pre-requisites above.'
-    ))
-  } else {
-    list.each{ item ->
-      input(
-        name: "${prefix}_${item}",
-        type: 'enum',
-        width: 6,
-        title: emphasis("Buttons/LEDs activating '${item}'"),
-        submitOnChange: true,
-        required: false,
-        multiple: true,
-        options: ledDevices.collect{ d ->
-          "${d.displayName}: ${d.deviceNetworkId}"
-        }?.sort()
-      )
-    }
-  }
 }
 
 void mapKpadDNIandButtonToItem (String prefix) {

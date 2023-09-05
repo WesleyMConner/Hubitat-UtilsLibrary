@@ -189,7 +189,7 @@ String getInfoForApps (List<InstAppW> appObjs, String joinText = ', ') {
 void keepOldestAppObjPerAppLabel (List<String> keepLabels, Boolean LOG = false) {
   getAllChildApps()?.groupBy{ app -> app.getLabel() }.each{ label, appObjs ->
     if (LOG) log.trace(
-      "UTILS keepOldestAppObjPerAppLabelv2()<br/>"
+      "UTILS keepOldestAppObjPerAppLabel()<br/>"
       + "label: >${label}<<br/>"
       + "keepLabels: >${keepLabels}<<br/>"
       + "keepLabels.findAll{ it -> it == label }: ${keepLabels.findAll{ it -> it == label }}"
@@ -198,15 +198,15 @@ void keepOldestAppObjPerAppLabel (List<String> keepLabels, Boolean LOG = false) 
     if (keepLabels.findAll{ it -> it == label }) {
       appObjs.sort{}.reverse().eachWithIndex{ appObj, index ->
         if (index == 0) {
-          if (LOG) log.trace "UTILS keepOldestAppObjPerAppLabelv2() keeping newer '${getAppInfo(appObj)}'"
+          if (LOG) log.trace "UTILS keepOldestAppObjPerAppLabel() keeping newer '${getAppInfo(appObj)}'"
         } else {
-          if (LOG) log.trace "UTILS keepOldestAppObjPerAppLabelv2() deleting older '${getAppInfo(appObj)}'"
+          if (LOG) log.trace "UTILS keepOldestAppObjPerAppLabel() deleting older '${getAppInfo(appObj)}'"
           deleteChildApp(appObj.getId())
         }
       }
     } else {
       appObjs.each{ appObj ->
-        if (LOG) log.trace "UTILS keepOldestAppObjPerAppLabelv2() deleting orphaned '${getAppInfo(appObj)}')"
+        if (LOG) log.trace "UTILS keepOldestAppObjPerAppLabel() deleting orphaned '${getAppInfo(appObj)}')"
         deleteChildApp(appObj.getId())
       }
     }

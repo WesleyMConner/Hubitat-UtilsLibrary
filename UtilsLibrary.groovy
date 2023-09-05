@@ -100,7 +100,7 @@ void pbsgChildAppDrilldown(
   if (!pbsgApp || pbsgApp.getAllChildDevices().size() == 0) {
     if (pbsgApp) deleteChildDevice(pbsg.getDeviceNetworkId())
     pbsgApp = addChildApp('wesmc', pbsgInstType, pbsgName)
-    pbsgApp.configure(switchNames, defaultSwitchNames, settings.log)
+    pbsgApp.configure(switchNames, defaultSwitchName, settings.log)
   }
   href (
     name: pbsgName,

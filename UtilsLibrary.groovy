@@ -81,18 +81,26 @@ String red(String s) {
 }
 
 void pbsgChildAppDrilldown(
-  String pbsgName,               // state.MODE_PBSG_APP_NAME
-  String pbsgInstType,           // 'modePBSG'
-  String pbsgPageName,           // 'modePbsgPage'
-  ArrayList switchNames,         // state.MODE_SWITCH_NAMES
-  String defaultSwitchName,      // state.DEFAULT_MODE_SWITCH_NAME
-  Boolean log = settings.log
+  String pbsgName,           // state.MODE_PBSG_APP_NAME
+  String pbsgInstType,       // 'modePBSG'
+  String pbsgPageName,       // 'modePbsgPage'
+  ArrayList switchNames,     // state.MODE_SWITCH_NAMES
+  String defaultSwitchName   // state.DEFAULT_MODE_SWITCH_NAME
   ) {
+  if (settings.log) log.trace(
+    'UTILS pbsgChildAppDrilldown() '
+    + "<b>pbsgName:</b> ${pbsgName}, "
+    + "<b>pbsgInstType:</b> ${pbsgInstType}, "
+    + "<b>pbsgPageName:</b> ${pbsgPageName}, "
+    + "<b>switchNames:</b> ${switchNames}, "
+    + "<b>defaultSwitchName:</b> ${defaultSwitchName}"
+  )
   paragraph heading('PBSG Inspection')
   InstAppW pbsgApp = app.getChildAppByLabel(pbsgName)
-  if (!pbsgApp) {
+  if (!pbsgApp || pbsgApp.getAllChildDevices().size() == 0) {
+    if (pbsgApp) deleteChildDevice(pbsg.getDeviceNetworkId())
     pbsgApp = addChildApp('wesmc', pbsgInstType, pbsgName)
-    pbsgApp.configure(switchNames, defaultSwitchNames, log)
+    pbsgApp.configure(switchNames, defaultSwitchNames, settings.log)
   }
   href (
     name: pbsgName,
@@ -189,10 +197,10 @@ String getInfoForApps (List<InstAppW> appObjs, String joinText = ', ') {
 void keepOldestAppObjPerAppLabel (List<String> keepLabels, Boolean LOG = false) {
   getAllChildApps()?.groupBy{ app -> app.getLabel() }.each{ label, appObjs ->
     if (LOG) log.trace(
-      "UTILS keepOldestAppObjPerAppLabel()<br/>"
-      + "label: >${label}<<br/>"
-      + "keepLabels: >${keepLabels}<<br/>"
-      + "keepLabels.findAll{ it -> it == label }: ${keepLabels.findAll{ it -> it == label }}"
+      "UTILS keepOldestAppObjPerAppLabel(), "
+      + "<b>label:</b> >${label}<, "
+      + "<b>keepLabels:</b> >${keepLabels}<, "
+      + "<b>keepLabels.findAll{ it -> it == label }:</b> ${keepLabels.findAll{ it -> it == label }}"
     )
     // NOTE: Using 'findALl{} since contains() DID NOT work.
     if (keepLabels.findAll{ it -> it == label }) {

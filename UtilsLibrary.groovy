@@ -80,6 +80,30 @@ String red(String s) {
   return """<span style="${RED_BOLD}">${s}</span>"""
 }
 
+void pbsgChildAppDrilldown(
+  String pbsgName,               // state.MODE_PBSG_APP_NAME
+  String pbsgInstType,           // 'modePBSG'
+  String pbsgPageName,           // 'modePbsgPage'
+  ArrayList switchNames,         // state.MODE_SWITCH_NAMES
+  String defaultSwitchName,      // state.DEFAULT_MODE_SWITCH_NAME
+  Boolean log = settings.log
+  ) {
+  paragraph heading('PBSG Inspection')
+  InstAppW pbsgApp = app.getChildAppByLabel(pbsgName)
+  if (!pbsgApp) {
+    pbsgApp = addChildApp('wesmc', pbsgInstType, pbsgName)
+    pbsgApp.configure(switchNames, defaultSwitchNames, log)
+  }
+  href (
+    name: pbsgName,
+    width: 2,
+    url: "/installedapp/configure/${pbsgApp.getId()}/${pbsgPageName}",
+    style: 'internal',
+    title: "Edit <b>${getAppInfo(pbsgApp)}</b>",
+    state: null, //'complete'
+  )
+}
+
 // -------------------------------------------------------------------
 // T B D
 // -------------------------------------------------------------------
@@ -129,6 +153,14 @@ void mapKpadDNIandButtonToItem (String prefix) {
   //   - Keypad DNI
   //   - Keypad Button number
   settings.each{ key, value ->
+//log.trace(
+//  "U T I L S #156 "
+//  + "<b>key:</b> ${key}, "
+//  + "<b>value:</b> ${value}, "
+//  + "<b>prefix:</b> ${prefix}, "
+//  + "<b>:</b> ${}, "
+//  + """<b>key.contains("${prefix}_"):</b> ${key.contains("${prefix}_")}, """
+//)
     if (key.contains("${prefix}_")) {
       String mode = key.minus("${prefix}_")
       value.each{ item ->
@@ -155,28 +187,15 @@ String getInfoForApps (List<InstAppW> appObjs, String joinText = ', ') {
 }
 
 void keepOldestAppObjPerAppLabel (List<String> keepLabels, Boolean LOG = false) {
-  // De-dups Child Apps by App Label by removing older (lower-valued) App Ids.
-  //-- TESTING->  Deliberately create noise for testing dups:
-  //-- TESTING->    addChildApp('wesmc', 'whaRoom', 'Kitchen')
-  //-- TESTING->    addChildApp('wesmc', 'whaRoom', 'Den')
-  //-- TESTING->    addChildApp('wesmc', 'whaRoom', 'Kitchen')
-  //-- TESTING->    addChildApp('wesmc', 'whaRoom', 'Puppies')
-  //-- TESTING->    addChildApp('wesmc', 'modePBSG', 'Butterflies')
-  /*
-  addChildApp('wesmc', 'whaRoom', 'Kitchen')
-  addChildApp('wesmc', 'whaRoom', 'Den')
-  addChildApp('wesmc', 'whaRoom', 'Kitchen')
-  addChildApp('wesmc', 'whaRoom', 'Puppies')
-  addChildApp('wesmc', 'modePBSG', 'Butterflies')
-  */
   getAllChildApps()?.groupBy{ app -> app.getLabel() }.each{ label, appObjs ->
     if (LOG) log.trace(
       "UTILS keepOldestAppObjPerAppLabelv2()<br/>"
-      + "label: ${label}<br/>"
-      + "keepLabels: ${keepLabels}<br/>"
-      + "keepLabels.contains(label): ${keepLabels.contains(label)}"
+      + "label: >${label}<<br/>"
+      + "keepLabels: >${keepLabels}<<br/>"
+      + "keepLabels.findAll{ it -> it == label }: ${keepLabels.findAll{ it -> it == label }}"
     )
-    if (keepLabels.contains(label)) {
+    // NOTE: Using 'findALl{} since contains() DID NOT work.
+    if (keepLabels.findAll{ it -> it == label }) {
       appObjs.sort{}.reverse().eachWithIndex{ appObj, index ->
         if (index == 0) {
           if (LOG) log.trace "UTILS keepOldestAppObjPerAppLabelv2() keeping newer '${getAppInfo(appObj)}'"
@@ -309,7 +328,3 @@ void logEventDetails (Event e, Boolean DEEP = false) {
     </tr>"""
   log.trace "UTILS logEventDetails()<br/><table>${rows}</table>"
 }
-
-// -----------------------------------------------------
-// A D D   S O L I C I T E D   D A T A   T O   S T A T E
-// -----------------------------------------------------

@@ -80,6 +80,10 @@ String red(String s) {
   return """<span style="${RED_BOLD}">${s}</span>"""
 }
 
+// -----------------------------
+// G E N E R A L   M E T H O D S
+// -----------------------------
+
 void pbsgChildAppDrilldown(
   String pbsgName,           // state.MODE_PBSG_APP_NAME
   String pbsgInstType,       // 'modePBSG'
@@ -112,9 +116,6 @@ void pbsgChildAppDrilldown(
   )
 }
 
-// -------------------------------------------------------------------
-// T B D
-// -------------------------------------------------------------------
 void solicitLog () {
   Boolean currentValue = settings.log ?: true
   input (
@@ -182,10 +183,6 @@ void mapKpadDNIandButtonToItem (String prefix) {
   }
 }
 
-// -----------------------------------
-// E X T E N D   H U B I T A T   A P I
-// -----------------------------------
-
 String getAppInfo (InstAppW appObj) {
   return "${appObj.getLabel()} (${appObj.getId()})"
 }
@@ -230,9 +227,6 @@ String deviceTag(def device) {
   return device ? "${device.displayName} (${device.id})" : null
 }
 
-// ---------------------------------------------
-// H T M L   I N S P E C T I O N   M E T H O D S
-// ---------------------------------------------
 String hubPropertiesAsHtml() {
   Hub hub = Loc.hub
   String hubProperties = hub.getProperties().collect{k, v ->

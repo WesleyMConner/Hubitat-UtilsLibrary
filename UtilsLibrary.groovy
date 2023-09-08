@@ -91,6 +91,13 @@ void pbsgChildAppDrilldown(
   ArrayList switchNames,     // state.MODE_SWITCH_NAMES
   String defaultSwitchName   // state.DEFAULT_MODE_SWITCH_NAME
   ) {
+  // Design Notes
+  //   - Once a PGSB instance has been created and configured, it may be
+  //     necessary to reconfigure the PBSG - e.g., if the switchNames list
+  //     grows or shrinks.
+  //   - The PBSG-LIB configure() can function as a re-configure() as it
+  //     preserves existing VSWs that need to remain and prunes VSWs that
+  //     leave scope.
   if (settings.log) log.trace(
     'UTILS pbsgChildAppDrilldown() '
     + "<b>pbsgName:</b> ${pbsgName}, "
@@ -104,8 +111,8 @@ void pbsgChildAppDrilldown(
   if (!pbsgApp || pbsgApp.getAllChildDevices().size() == 0) {
     if (pbsgApp) deleteChildDevice(pbsg.getDeviceNetworkId())
     pbsgApp = addChildApp('wesmc', pbsgInstType, pbsgName)
-    pbsgApp.configure(switchNames, defaultSwitchName, settings.log)
   }
+  pbsgApp.configure(switchNames, defaultSwitchName, settings.log)
   href (
     name: pbsgName,
     width: 2,

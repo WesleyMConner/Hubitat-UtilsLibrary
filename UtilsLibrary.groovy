@@ -148,7 +148,7 @@ String displayState() {
   ].join('<br/>')
 }
 
-void mapKpadDNIandButtonToItem (String prefix) {
+void populateKpadButtons (String prefix) {
   // Design Note
   //   The Keypad LEDs collected by selectForMode() function as a proxy for
   //   Keypad button presses. Settings data includes the user-friendly

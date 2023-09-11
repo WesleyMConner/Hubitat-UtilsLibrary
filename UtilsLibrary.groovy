@@ -295,7 +295,7 @@ String devicesAsHtml(List<DevW> devices) {
   return "<table>${headerRow}${dataRows}</table>"
 }
 
-void logEventDetails (Event e, Boolean DEEP = false) {
+String eventDetails (Event e, Boolean DEEP = false) {
   String rows = """
     <tr>
       <th align='right'>descriptionText</th>
@@ -335,5 +335,5 @@ void logEventDetails (Event e, Boolean DEEP = false) {
       <th align='right'>unixTime</th>
       <td>${e.unixTime}</td>
     </tr>"""
-  log.trace "UTILS logEventDetails()<br/><table>${rows}</table>"
+  return "<table>${rows}</table>"
 }

@@ -84,7 +84,7 @@ String red(String s) {
 // G E N E R A L   M E T H O D S
 // -----------------------------
 
-void pbsgChildAppDrilldown(
+void displayInstantiatedPbsgHref(
   String pbsgName,           // state.MODE_PBSG_APP_NAME
   String pbsgInstType,       // 'modePBSG'
   String pbsgPageName,       // 'modePbsgPage'
@@ -123,7 +123,7 @@ void pbsgChildAppDrilldown(
   )
 }
 
-void solicitLog () {
+void configureLogging () {
   Boolean currentValue = settings.log ?: true
   input (
     name: 'log',
@@ -148,7 +148,7 @@ String displayState() {
   ].join('<br/>')
 }
 
-void populateKpadButtons (String prefix) {
+void populateStateKpadButtons (String prefix) {
   // Design Note
   //   The Keypad LEDs collected by selectForMode() function as a proxy for
   //   Keypad button presses. Settings data includes the user-friendly
@@ -204,10 +204,10 @@ void keepOldestAppObjPerAppLabel (List<String> keepLabels, Boolean LOG = false) 
       "UTILS keepOldestAppObjPerAppLabel(), "
       + "<b>label:</b> >${label}<, "
       + "<b>keepLabels:</b> >${keepLabels}<, "
-      + "<b>keepLabels.findAll{ it -> it == label }:</b> ${keepLabels.findAll{ it -> it == label }}"
+      + "<b>keepLabels?.findAll{ it -> it == label }:</b> ${keepLabels?.findAll{ it -> it == label }}"
     )
     // NOTE: Using 'findALl{} since contains() DID NOT work.
-    if (keepLabels.findAll{ it -> it == label }) {
+    if (keepLabels?.findAll{ it -> it == label }) {
       appObjs.sort{}.reverse().eachWithIndex{ appObj, index ->
         if (index == 0) {
           if (LOG) log.trace "UTILS keepOldestAppObjPerAppLabel() keeping newer '${getAppInfo(appObj)}'"

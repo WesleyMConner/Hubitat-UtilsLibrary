@@ -192,23 +192,35 @@ void populateStateKpadButtons (String prefix) {
   // The Button DNI is further parsed into a list with two components:
   //   - Keypad DNI
   //   - Keypad Button number
-  state.kpadButtons = [:]
+  String stateKey = "${prefix}Map"
+  state[stateKey] = [:]
   settings.each{ key, value ->
     if (key.contains("${prefix}_")) {
-      String mode = key.minus("${prefix}_")
+      String base = key.minus("${prefix}_")
       value.each{ item ->
-        List<String> kpadDniAndButton = item?.tokenize(' ')?.last()?.tokenize('-')
-        if (kpadDniAndButton.size() == 2 && mode) {
-          if (!state.kpadButtons[kpadDniAndButton[0]]) state.kpadButtons[kpadDniAndButton[0]] = [:]
-          state.kpadButtons[kpadDniAndButton[0]][kpadDniAndButton[1]] = mode
+        List<String> kpadDniAndButtons = item?.tokenize(' ')?.last()?.tokenize('-')
+        if (kpadDniAndButtons.size() == 2 && base) {
+          if (state[stateKey][kpadDniAndButtons[0]] == null) {
+            state[stateKey][kpadDniAndButtons[0]] = [:]
+          }
+          state[stateKey][kpadDniAndButtons[0]][kpadDniAndButtons[1]] = base
         }
       }
     }
   }
 }
 
-String getAppInfo (InstAppW appObj) {
-  return "${appObj.getLabel()} (${appObj.getId()})"
+String getAppInfo (InstAppW app) {
+  return "${app.getLabel()} (${app.getId()})"
+}
+
+String getDeviceInfo (def device) {
+  // Design Note:
+  //   - The parameter is passed as 'def' in lieu of 'DevW'.
+  //   - When devices are used from a LinkedHashMap (e.g., settings, state),
+  //     the original DevW type is lost - resulting in method call fail that
+  //     reports a type mismatch.
+  return device ? "${device.displayName} (${device.id})" : null
 }
 
 void keepOldestAppObjPerAppLabel (List<String> keepLabels, Boolean LOG = false) {
@@ -237,16 +249,6 @@ void keepOldestAppObjPerAppLabel (List<String> keepLabels, Boolean LOG = false) 
     }
   }
 }
-
-String deviceTag(def device) {
-  // Design Note:
-  //   - The parameter is passed as 'def' in lieu of 'DevW'.
-  //   - When devices are used from a LinkedHashMap (e.g., settings, state),
-  //     the original DevW type is lost - resulting in method call fail that
-  //     reports a type mismatch.
-  return device ? "${device.displayName} (${device.id})" : null
-}
-
 
 String eventDetails (Event e, Boolean DEEP = false) {
   String rows = """

@@ -8,12 +8,12 @@
 
     var model = []
     var configPage = ""
-    $(function () {
-        $(window).on('unload', function () {
+    $(function {
+        $(window).on('unload', function {
             saveScrollPosition('scrollPositionApp1072');
         });
 
-        $(window).on('load', function () {
+        $(window).on('load', function {
             restoreScrollPosition('scrollPositionApp1072');
             $('.newLine').each(function (i, v) {
                 $(v).width($(v).parent().width() - $(v).prevAll('.mdl-cell').width())
@@ -85,7 +85,7 @@
             }
 
             if (parseInt(data.configPage.refreshInterval) > 0) {
-                refreshInterval = setInterval(function () {
+                refreshInterval = setInterval(function {
                     log("in refreshInterval")
                     var path = window.location.pathname.replace('/configure/', '/configure/json/')
                     if (pageName != "" && pageName != path.split('/')[path.split('/').length - 1]) {

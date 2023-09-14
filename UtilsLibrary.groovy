@@ -84,6 +84,30 @@ String red(String s) {
 // G E N E R A L   M E T H O D S
 // -----------------------------
 
+void identifyLedButtonsForListItems(
+  List<String> list,
+  List<DevW> ledDevices,
+  String prefix
+  ) {
+  // Keypad LEDs are used as a proxy for Keypad buttons.
+  //   - The button's displayName is meaningful to clients.
+  //   - The button's deviceNetworkId is <KPAD DNI> hyphen <BUTTON #>
+  list.each{ item ->
+    input(
+      name: "${prefix}_${item}",
+      type: 'enum',
+      width: 6,
+      title: emphasis("Identify LEDs/Buttons for <b>${item}</b>"),
+      submitOnChange: true,
+      required: false,
+      multiple: true,
+      options: ledDevices.collect{ d ->
+        "${d.getLabel()}: ${d.getDeviceNetworkId()}"
+      }?.sort()
+    )
+  }
+}
+
 void displayInstantiatedPbsgHref(
   String pbsgName,           // state.MODE_PBSG_APP_NAME
   String pbsgInstType,       // 'modePBSG'
@@ -155,7 +179,7 @@ void populateStateKpadButtons (String prefix) {
   //   LED displayName and the LED device ID, which is comprised of 'Keypad
   //   Device Id' and 'Button Number', concatenated with a hyphen. This
   //   method populates "state.[<KPAD DNI>]?.[<KPAD Button #>] = mode".
-  state.kpadButtons = [:]
+  //
   // Sample Settings Data
   //     key: LEDs_Day,
   //   value: [Central KPAD 2 - DAY: 5953-2]
@@ -168,15 +192,8 @@ void populateStateKpadButtons (String prefix) {
   // The Button DNI is further parsed into a list with two components:
   //   - Keypad DNI
   //   - Keypad Button number
+  state.kpadButtons = [:]
   settings.each{ key, value ->
-//log.trace(
-//  "U T I L S #156 "
-//  + "<b>key:</b> ${key}, "
-//  + "<b>value:</b> ${value}, "
-//  + "<b>prefix:</b> ${prefix}, "
-//  + "<b>:</b> ${}, "
-//  + """<b>key.contains("${prefix}_"):</b> ${key.contains("${prefix}_")}, """
-//)
     if (key.contains("${prefix}_")) {
       String mode = key.minus("${prefix}_")
       value.each{ item ->
@@ -192,10 +209,6 @@ void populateStateKpadButtons (String prefix) {
 
 String getAppInfo (InstAppW appObj) {
   return "${appObj.getLabel()} (${appObj.getId()})"
-}
-
-String getInfoForApps (List<InstAppW> appObjs, String joinText = ', ') {
-  return appObjs.collect{ getAppInfo(it) }.join(joinText)
 }
 
 void keepOldestAppObjPerAppLabel (List<String> keepLabels, Boolean LOG = false) {
@@ -234,66 +247,6 @@ String deviceTag(def device) {
   return device ? "${device.displayName} (${device.id})" : null
 }
 
-String hubPropertiesAsHtml() {
-  Hub hub = Loc.hub
-  String hubProperties = hub.getProperties().collect{k, v ->
-    "<tr><th>${k}</th><td>$v</td></tr>"
-  }.join('')
-  return "<b>Hub Properties</b><br/><table>${hubProperties}</table>"
-}
-
-String roomsAsHtml(ArrayList<LinkedHashMap> rooms) {
-  String dataRows = rooms.collect{ r ->
-    """<tr>
-      <td width="5%">${r.id}</td>
-      <td width="10%">${r.name}</td>
-      <td width="90%">${r.deviceIds}</td>
-    </tr>"""
-  }.join('')
-  return """
-    <b>Room Info</b>
-    <table>
-      <tr><th>id</th><th>name</th><th>deviceIds</th><tr/>
-      ${dataRows}
-    </table>
-  """
-}
-
-String devicesAsHtml(List<DevW> devices) {
-  // Not helpful
-  //   - d.getMetaPropertyValues()
-  //   = d.type() DOES NOT EXIST
-  //   = d.type always null
-  String headerRow = """<tr>
-    <th style='border: 1px solid black' align='center'>Id</th>
-    <th style='border: 1px solid black' align='center'>Display Name</th>
-    <th style='border: 1px solid black' align='center'>Room Id</th>
-    <th style='border: 1px solid black' align='center'>Room Name</th>
-    <th style='border: 1px solid black' align='center'>Supported Attributes</th>
-    <th style='border: 1px solid black' align='center'>Data</th>
-    <th style='border: 1px solid black' align='center'>Current States</th>
-    <th style='border: 1px solid black' align='center'>Supported Commands</th>
-    <th style='border: 1px solid black' align='center'>Parent Device ID</th>
-    <th style='border: 1px solid black' align='center'>Disabled?</th>
-    <th style='border: 1px solid black' align='center'>Type</th>
-  </tr>"""
-  String dataRows = settings.devices.collect{d ->
-    """<tr>
-      <td style='border: 1px solid black' align='center'>${d.id}</td>
-      <td style='border: 1px solid black' align='center'>${d.displayName}</td>
-      <td style='border: 1px solid black' align='center'>${d.getRoomId()}</td>
-      <td style='border: 1px solid black' align='center'>${d.getRoomName()}</td>
-      <td style='border: 1px solid black' align='center'>${d.getSupportedAttributes()}</td>
-      <td style='border: 1px solid black' align='center'>${d.getData()}</td>
-      <td style='border: 1px solid black' align='center'>${d.getCurrentStates}</td>
-      <td style='border: 1px solid black' align='center'>${d.getSupportedCommands}</td>
-      <td style='border: 1px solid black' align='center'>${d.getParentDeviceId()}</td>
-      <td style='border: 1px solid black' align='center'>${d.isDisabled()}</td>
-      <td style='border: 1px solid black' align='center'>${d.type}</td>
-    </tr>"""
-  }.join()
-  return "<table>${headerRow}${dataRows}</table>"
-}
 
 String eventDetails (Event e, Boolean DEEP = false) {
   String rows = """

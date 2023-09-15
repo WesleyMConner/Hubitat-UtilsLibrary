@@ -108,6 +108,15 @@ void identifyLedButtonsForListItems(
   }
 }
 
+String getSwitchState (DevW d) {
+  List<String> stateValues = d.collect({ it.currentStates.value }).flatten()
+  return stateValues.contains('on')
+      ? 'on'
+      : stateValues.contains('off')
+        ? 'off'
+        : 'unknown'
+}
+
 void displayInstantiatedPbsgHref(
   String pbsgName,           // state.MODE_PBSG_APP_NAME
   String pbsgInstType,       // 'modePBSG'

@@ -4,13 +4,6 @@ caseSensitive: false
 # Quote entries that include '*' or '**'.
 ignorePaths:
   - .vscode
-  - '**.svg'
-  - '**/__data__/**'
-  - '**/images/**'
-  - 'public/'
-  - coverage/
-  - dist/
-  - node_modules/
-  - package.json
 words:
   - hubitat
+  - wesmc

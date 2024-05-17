@@ -4,15 +4,15 @@
   "version": "0.1.0",
   "dateReleased": "2024-05-17",
   "minimumHEVersion": "2.3.8.140",
-  "documentationLink": "=====> README <=====",
-  "licenseFile": "=====> LICENSE BLOB <=====",
+  "documentationLink": "https://github.com/WesleyMConner/Hubitat-UtilsLibrary/blob/main/README.adoc",
+  "licenseFile": "https://github.com/WesleyMConner/Hubitat-UtilsLibrary/blob/main/LICENSE",
   "tags": [ "Tools & Utilities" ],
   "files" : [
 		{
-			"id": "aebfda77-f0cd-4423-b274-761ad246b218",
-			"location": "https://raw.githubusercontent.com/file.js",
+			"id": "78dbf183-99af-41c4-8cb1-481f7e8a0ee4",
+			"location": "https://github.com/WesleyMConner/Hubitat-UtilsLibrary/blob/main/WesMC-UtilsLibrary.zip",
       "category": "Convenience",
-      "description": "General functions leveraged in downstream applications",
+      "description": "General functions leveraged in downstream applications"
 		}
 	]
 }

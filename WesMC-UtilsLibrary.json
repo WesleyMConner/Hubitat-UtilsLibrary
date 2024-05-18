@@ -14,7 +14,7 @@
       "id": "ae56a9c9-3731-492a-a284-ae0d312aa4dd",
       "name": "WesMC-UtilsLibrary",
       "category": "Convenience",
-      "location": "https://raw.githubusercontent.com/WesleyMConner/Hubitat-UtilsLibrary/main/WesMC-UtilsLibrary.json",
+      "location": "https://raw.githubusercontent.com/WesleyMConner/Hubitat-UtilsLibrary/main/WesMC-UtilsLibrary.zip",
       "description": "General-purpose functions leveraged in downstream WesMC applications"
 		}
 	]

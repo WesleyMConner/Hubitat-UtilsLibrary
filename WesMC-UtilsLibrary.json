@@ -2,17 +2,20 @@
   "packageName": "WesMC-UtilsLibrary",
   "author": "Wesley M. Conner",
   "version": "0.1.0",
-  "dateReleased": "2024-05-17",
+  "releaseNotes": "Initial release enroute to prospective broad HPM adoption",
+  "dateReleased": "2024-05-18",
   "minimumHEVersion": "2.3.8.140",
   "documentationLink": "https://github.com/WesleyMConner/Hubitat-UtilsLibrary/blob/main/README.adoc",
   "licenseFile": "https://github.com/WesleyMConner/Hubitat-UtilsLibrary/blob/main/LICENSE",
+  "communityLink": "",
   "tags": [ "Tools & Utilities" ],
   "files" : [
 		{
-			"id": "78dbf183-99af-41c4-8cb1-481f7e8a0ee4",
-			"location": "https://github.com/WesleyMConner/Hubitat-UtilsLibrary/blob/main/WesMC-UtilsLibrary.zip",
+      "id": "ae56a9c9-3731-492a-a284-ae0d312aa4dd",
+      "name": "WesMC-UtilsLibrary",
       "category": "Convenience",
-      "description": "General functions leveraged in downstream applications"
+      "location": "https://raw.githubusercontent.com/WesleyMConner/Hubitat-UtilsLibrary/main/WesMC-UtilsLibrary.json",
+      "description": "General-purpose functions leveraged in downstream WesMC applications"
 		}
 	]
 }

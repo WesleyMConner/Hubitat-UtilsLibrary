@@ -1,7 +1,7 @@
 {
   "packageName": "WesMC-UtilsLibrary",
   "author": "Wesley M. Conner",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "releaseNotes": "Initial release enroute to prospective broad HPM adoption",
   "dateReleased": "2024-05-18",
   "minimumHEVersion": "2.3.8.140",

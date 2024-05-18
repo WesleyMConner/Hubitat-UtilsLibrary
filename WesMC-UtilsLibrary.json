@@ -9,13 +9,15 @@
   "licenseFile": "https://github.com/WesleyMConner/Hubitat-UtilsLibrary/blob/main/LICENSE",
   "communityLink": "",
   "tags": [ "Tools & Utilities" ],
-  "files" : [
+  "bundles" : [
 		{
       "id": "ae56a9c9-3731-492a-a284-ae0d312aa4dd",
-      "name": "WesMC-UtilsLibrary",
+      "name": "UtilsLibrary",
+      "namespace": "wesmc",
       "category": "Convenience",
       "location": "https://raw.githubusercontent.com/WesleyMConner/Hubitat-UtilsLibrary/main/WesMC-UtilsLibrary.zip",
-      "description": "General-purpose functions leveraged in downstream WesMC applications"
+      "description": "General-purpose functions leveraged in downstream WesMC applications",
+      "required": true
 		}
 	]
 }

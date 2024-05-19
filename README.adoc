@@ -1,1 +1,1 @@
-= Hubitat-Ra2IRParserLibrary
+= Hubitat-Pro2IRParserLibrary

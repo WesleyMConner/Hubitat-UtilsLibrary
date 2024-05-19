@@ -3,7 +3,9 @@ language: en
 caseSensitive: false
 # Quote entries that include '*' or '**'.
 ignorePaths:
+  - .groovylintrc.json
   - .vscode
 words:
+  - groovylintrc
   - hubitat
   - wesmc

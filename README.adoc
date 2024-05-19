@@ -1,17 +1,1 @@
-
-= Hubitat-UtilsLibrary
-Hubitat-compatible code written for Hubitat's Groovy sandbox environment.
-
-lUtils.groovy::
-General-purpose functions that can be incorporated into downstream applications via `#include wesmc.lUtils`.
-
-DemoUtils.groovy::
-Hubitat-compatible application source code that illustrates lUtils methods.
-
-lUtils.zip::
-A _Hubitat Bundle_ for installing the `lUtils.groovy` Hubitat library and the
-`Demo-Utils.groovy` Hubitat application.
-
-packageManifest.json::
-Provided to install the lUtils.zip bundle via the moniker `WesMC-UtilsLibrary` in
-https://hubitatpackagemanager.hubitatcommunity.com/[Hubitat Package Manager (HPM)].
+= Hubitat-Ra2IRParserLibrary

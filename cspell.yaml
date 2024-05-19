@@ -6,5 +6,7 @@ ignorePaths:
   - .vscode
 words:
   - enroute
+  - groovylintrc
   - hubitat
+  - javadoc
   - wesmc

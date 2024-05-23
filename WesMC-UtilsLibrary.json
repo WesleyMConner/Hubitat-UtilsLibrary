@@ -7,7 +7,6 @@
   "minimumHEVersion": "2.3.8.140",
   "documentationLink": "https://github.com/WesleyMConner/Hubitat-UtilsLibrary/blob/main/README.adoc",
   "licenseFile": "https://github.com/WesleyMConner/Hubitat-UtilsLibrary/blob/main/LICENSE",
-  "communityLink": "",
   "tags": [ "Tools & Utilities" ],
   "bundles" : [
 		{

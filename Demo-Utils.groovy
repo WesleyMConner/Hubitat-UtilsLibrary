@@ -13,7 +13,6 @@
 //   implied.
 // ---------------------------------------------------------------------------------
 import com.hubitat.hub.domain.Event as Event
-//import groovy.json.JsonSlurper
 import com.hubitat.app.DeviceWrapper as DevW
 
 // The Groovy Linter generates NglParseError on Hubitat #include !!!
@@ -28,19 +27,6 @@ definition (
   iconUrl: '',
   iconX2Url: ''
 )
-
-/*
-  <table>
-    <tr>
-      <th>setLogLevel()<th>
-      <th>logTrace()</th>
-      <th>logDebug()</th>
-      <th>logInfo()</th>
-      <th>logWarn()</th>
-      <th>logError()</th>
-    </tr>
-  </table>
-*/
 
 preferences {
   page(

@@ -54,7 +54,7 @@ ArrayList modeNames() {
   return getLocation().getModes()*.name
 }
 
-String switchState(DevW d) {
+String switchStatV1(DevW d) {
   /* groovylint-disable-next-line UseCollectMany */
   ArrayList stateValues = d.collect { device -> device.currentStates.value }.flatten()
   return stateValues?.contains('on')
@@ -62,6 +62,10 @@ String switchState(DevW d) {
       : stateValues?.contains('off')
         ? 'off'
         : 'unknown'
+}
+
+String switchState(DevW d) {
+  return d.currentValue('switch', true) // Get the state w/out using the cache
 }
 
 String eventDetails(Event e) {
@@ -111,15 +115,16 @@ String redBar() {
 }
 
 String h1(String s) {
-  return """<span style='font-size: 2em; font-family: Roboto; font-weight: bold;'>${s}</span>"""
+  // font-weight: bold;
+  return """<span style='font-size: 2em; font-family: Roboto;'>${s}</span>"""
 }
 
 String h2(String s) {
-  return """<span style='font-size: 1.3em; font-family: Roboto; font-weight: bold;'>${s}</span>"""
+  return """<span style='font-size: 1.3em; font-family: Roboto;'>${s}</span>"""
 }
 
 String h3(String s) {
-  return """<span style='font-size: 1.1em; font-family: Roboto; font-weight: bold;'>${s}</span>"""
+  return """<span style='font-size: 1.1em; font-family: Roboto;'>${s}</span>"""
 }
 
 String bullet1(String s) {

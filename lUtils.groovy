@@ -54,20 +54,6 @@ ArrayList modeNames() {
   return getLocation().getModes()*.name
 }
 
-String switchStatV1(DevW d) {
-  /* groovylint-disable-next-line UseCollectMany */
-  ArrayList stateValues = d.collect { device -> device.currentStates.value }.flatten()
-  return stateValues?.contains('on')
-      ? 'on'
-      : stateValues?.contains('off')
-        ? 'off'
-        : 'unknown'
-}
-
-String switchState(DevW d) {
-  return d.currentValue('switch', true) // Get the state w/out using the cache
-}
-
 String eventDetails(Event e) {
   String rows = """
     <tr>

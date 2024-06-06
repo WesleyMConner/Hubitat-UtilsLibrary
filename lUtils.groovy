@@ -29,9 +29,9 @@ library(
  importUrl: 'TBD'
 )
 
-////
-//// Convenience Methods
-////
+// -------------------
+// Convenience Methods
+// -------------------
 
 Integer safeParseInt(String s) {
   Integer result = null
@@ -84,9 +84,9 @@ String eventDetails(Event e) {
   return "<table>${rows}</table>"
 }
 
-////
-//// Convenience HTML-like Methods
-////
+// -----------------------------
+// Convenience HTML-like Methods
+// -----------------------------
 
 String blackBar() {
   return '<hr style="border: 5px solid black;"/>'
@@ -141,57 +141,57 @@ String bi(def val) {
   return i(b(val))
 }
 
-////
-//// Threshold-Based Logging
-////
+// -----------------------
+// Threshold-Based Logging
+// -----------------------
 
 void setLogLevel(String logThreshold) {
   Map logThresholdToLogLevel = [ TRACE: 5, DEBUG: 4, INFO: 3, WARN: 2, ERROR: 1 ]
   atomicState['logLevel'] = logThresholdToLogLevel."${logThreshold}" ?: 'INFO'
 }
 
-String appInfo(InstAppW app) {
-  return "${app?.label ?: 'MISSING_LABEL'} (${app?.id ?: 'MISSING_ID'})"
+String flexLabel() {
+  return (app ?: device).getLabel()
 }
 
 void logTrace(String fnName, String s) {
   // Fails closed if logLevel is missing.
   if ((state.logLevel ?: 5) > 4) {
-    log.trace("${appInfo(app)} <b>${fnName}</b> → ${s}")
+    log.trace("${flexLabel()} <b>${fnName}⟮ ⟯</b> → ${s}")
   }
 }
 
 void logDebug(String fnName, String s) {
   // Fails closed if logLevel is missing.
   if ((state.logLevel ?: 5) > 3) {
-    log.debug("${appInfo(app)} <b>${fnName}</b> → ${s}")
+    log.debug("${flexLabel()} <b>${fnName}⟮ ⟯</b> → ${s}")
   }
 }
 
 void logInfo(String fnName, String s) {
   // Fails closed if logLevel is missing.
   if ((state.logLevel ?: 5) > 2) {
-    log.info("${appInfo(app)} <b>${fnName}</b> → ${s}")
+    log.info("${flexLabel()} <b>${fnName}⟮ ⟯</b> → ${s}")
   }
 }
 
 void logWarn(String fnName, String s) {
   // Fails closed if logLevel is missing.
   if ((state.logLevel ?: 5) > 1) {
-    log.warn("${appInfo(app)} <b>${fnName}</b> → ${s}")
+    log.warn("${flexLabel()} <b>${fnName}⟮ ⟯</b> → ${s}")
   }
 }
 
 void logError(String fnName, String s) {
   // No conditional test to ensure all errors appear.
   log.error(
-    "${appInfo(app)} <b>${fnName}</b> → ${s}"
+    "${context(app)} <b>${fnName}⟮ ⟯</b> → ${s}"
   )
 }
 
-////
-//// ArrayList (vs String) Threshold-Based Logging
-////
+// --------------------------------------
+// ArrayList (vs String) Logging Variants
+// --------------------------------------
 
 void logError(String fnName, ArrayList ls, String delim = '<br/>&nbsp&nbsp') {
   logError(fnName, ls.join(delim))

@@ -54,6 +54,21 @@ ArrayList modeNames() {
   return getLocation().getModes()*.name
 }
 
+String toJson(def thing) {
+  def output = new JsonOutput()
+  return output.toJson(thing)
+}
+
+/* groovylint-disable-next-line MethodReturnTypeRequired */
+def fromJson(String json) {
+  def result
+  if (json) {
+    def slurper = new JsonSlurper()
+    result = slurper.parseText(json)
+  }
+  return result
+}
+
 String eventDetails(Event e) {
   String rows = """
     <tr>

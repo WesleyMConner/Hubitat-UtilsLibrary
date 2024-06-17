@@ -156,6 +156,17 @@ String bi(def val) {
   return i(b(val))
 }
 
+String bList(ArrayList list) {
+  return '[' + list.inject('') { s, e -> s << "${b(e)}, " } + ']'
+}
+
+String bMap(Map map) {
+  return [
+    "Map with 'key: value' pairs:",
+    map.inject('') { s, k, v -> s << "&nbsp;&nbsp;${i(k)}: ${b(v)}<br/>" }
+  ].join('<br/>')
+}
+
 // -----------------------
 // Threshold-Based Logging
 // -----------------------
@@ -200,7 +211,7 @@ void logWarn(String fnName, String s) {
 void logError(String fnName, String s) {
   // No conditional test to ensure all errors appear.
   log.error(
-    "${context(app)} <b>${fnName}⟮ ⟯</b> → ${s}"
+    "${flexLabel()} <b>${fnName}⟮ ⟯</b> → ${s}"
   )
 }
 

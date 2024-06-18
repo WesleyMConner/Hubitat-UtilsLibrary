@@ -161,10 +161,19 @@ String bList(ArrayList list) {
 }
 
 String bMap(Map map) {
-  return [
-    "Map with 'key: value' pairs:",
-    map.inject('') { s, k, v -> s << "&nbsp;&nbsp;${i(k)}: ${b(v)}<br/>" }
-  ].join('<br/>')
+  ArrayList terms = []
+  map.each { k, v -> terms.add("${i(k)}: ${b(v)}") }
+  return '[' + terms.join(', ') + ']'
+}
+
+String bMapTable(Map map) {
+  return [ 'Map',
+    "<table rules='all'><tr><th>${i('KEYS')}</th><th>${b('VALUES')}</tr>",
+    map.inject('') { s, k, v ->
+      s << "<tr><td align='right'>${i(k)}</td><td>${b(v)}</td></tr>"
+    },
+    '</table>'
+  ].join()
 }
 
 // -----------------------
@@ -177,41 +186,42 @@ void setLogLevel(String logThreshold) {
 }
 
 String flexLabel() {
-  return (app ?: device).getLabel()
+  String label = app?.getLabel() ?: device?.getDeviceNetworkId()
+  return "<span style='color: #800000;'>${label}</span>"
 }
 
 void logTrace(String fnName, String s) {
   // Fails closed if logLevel is missing.
   if ((state.logLevel ?: 5) > 4) {
-    log.trace("${flexLabel()} <b>${fnName}⟮ ⟯</b> → ${s}")
+    log.trace("${flexLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
   }
 }
 
 void logDebug(String fnName, String s) {
   // Fails closed if logLevel is missing.
   if ((state.logLevel ?: 5) > 3) {
-    log.debug("${flexLabel()} <b>${fnName}⟮ ⟯</b> → ${s}")
+    log.debug("${flexLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
   }
 }
 
 void logInfo(String fnName, String s) {
   // Fails closed if logLevel is missing.
   if ((state.logLevel ?: 5) > 2) {
-    log.info("${flexLabel()} <b>${fnName}⟮ ⟯</b> → ${s}")
+    log.info("${flexLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
   }
 }
 
 void logWarn(String fnName, String s) {
   // Fails closed if logLevel is missing.
   if ((state.logLevel ?: 5) > 1) {
-    log.warn("${flexLabel()} <b>${fnName}⟮ ⟯</b> → ${s}")
+    log.warn("${flexLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
   }
 }
 
 void logError(String fnName, String s) {
   // No conditional test to ensure all errors appear.
   log.error(
-    "${flexLabel()} <b>${fnName}⟮ ⟯</b> → ${s}"
+    "${flexLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}"
   )
 }
 

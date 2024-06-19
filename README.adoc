@@ -1,6 +1,9 @@
 = Hubitat-UtilsLibrary
 Hubitat-compatible code written for Hubitat's Groovy sandbox environment.
 
+IMPORTANT::  Make sure `eventSender()` is tested for App-initiated events.
+As of 19Jun2024 only Device-originated events have been tested.
+
 lUtils.groovy::
 General-purpose functions that can be incorporated into downstream applications via `#include wesmc.lUtils`.
 

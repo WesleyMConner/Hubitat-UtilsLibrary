@@ -173,6 +173,10 @@ String bMap(Map map) {
   return '[' + terms.join(', ') + ']'
 }
 
+String tdBordered(String content) {
+  return """<td style="border: solid 1px black;">${content}</td>"""
+}
+
 String bMapTable(Map map) {
   return [ 'Map',
     "<table rules='all'><tr><th>${i('KEYS')}</th><th>${b('VALUES')}</tr>",
@@ -203,12 +207,15 @@ String devHued(ChildDevW d) {
   return fancyLabel(d.getDeviceNetworkId(), d.id.toInteger())
 }
 
-/*
-String childDevHued(ChildDevW d) {
+String devHued(DevW d) {
   // Allow any caller to get a fancy label for a Device.
   return fancyLabel(d.getDeviceNetworkId(), d.id.toInteger())
 }
-*/
+
+String eventSender(Event e) {
+  // Returns a fancyLabel for the Application/Device sending the Event.
+  return fancyLabel(e.displayName, e.deviceId)
+}
 
 String fancyLabel(pLabel = null, pId = null) {
   // Automatically populates data for caller if no parameters are specified.
@@ -263,7 +270,7 @@ String fancyLabel(pLabel = null, pId = null) {
 }
 
 String stripFancy(String html) {
-  return html.replaceAll(/<\/?[^>]*>/, '')
+  return html?.replaceAll(/<\/?[^>]*>/, '')
 }
 
 void logTrace(String fnName, String s) {

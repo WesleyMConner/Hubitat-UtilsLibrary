@@ -143,6 +143,13 @@ String bullet2(String s) {
   return "&nbsp;&nbsp;&nbsp;&#x2022;&nbsp;&nbsp;${s}"
 }
 
+String alert(String s) {
+  return """
+<span style="display:inline-table;"><table><tr>
+  <td style="border: solid 2px black; background-color: #FFFF8F;">${b(s)}</td>
+</tr></table></span>"""
+}
+
 String b(def val) {
   String retVal = '<b>null</b>'
   if (val == '0') {

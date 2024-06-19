@@ -15,9 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ---------------------------------------------------------------------------------
-import com.hubitat.app.DeviceWrapper as DevW
-import com.hubitat.app.InstalledAppWrapper as InstAppW
-import com.hubitat.hub.domain.Event as Event
+// IMPORTS THAT CLIENTS SHOULD ADD:
+//   - import com.hubitat.app.ChildDeviceWrapper as ChildDevW
+//   - import com.hubitat.app.DeviceWrapper as DevW
+//   - import com.hubitat.app.InstalledAppWrapper as InstAppW
+//   - import com.hubitat.hub.domain.Event as Event
+//   - import groovy.json.JsonOutput as JsonOutput
+//   - import groovy.json.JsonSlurper as JsonSlurper
+//   - import java.lang.Math as Math
+//   - import java.lang.Object as Object
+
 
 library(
  name: 'lUtils',
@@ -185,43 +192,112 @@ void setLogLevel(String logThreshold) {
   atomicState['logLevel'] = logThresholdToLogLevel."${logThreshold}" ?: 'INFO'
 }
 
-String flexLabel() {
-  String label = app?.getLabel() ?: device?.getDeviceNetworkId()
-  return "<span style='color: #800000;'>${label}</span>"
+String appHued(InstAppW a) {
+log.info("appHUed a is ${a.class}")
+  // Allow any caller to get a fancy label for an App.
+  return fancyLabel(a.getLabel(), a.id.toInteger())
+}
+
+String devHued(ChildDevW d) {
+  // Allow any caller to get a fancy label for a Device.
+  return fancyLabel(d.getDeviceNetworkId(), d.id.toInteger())
+}
+
+/*
+String childDevHued(ChildDevW d) {
+  // Allow any caller to get a fancy label for a Device.
+  return fancyLabel(d.getDeviceNetworkId(), d.id.toInteger())
+}
+*/
+
+String fancyLabel(pLabel = null, pId = null) {
+  // Automatically populates data for caller if no parameters are specified.
+  // Methods appHued() and devHued() provide parameters.
+  label = pLabel ?: app?.getLabel() ?: device?.getDeviceNetworkId()
+  id = pId ?: (app?.id ?: device.id).toInteger()
+  // The following is the result of testing
+  //   - Bucket differation was poor when using label.hashCode() only.
+  //   - Multiplying by (a relatively consecutive) ID had limited benefit.
+  //   - Dividing by ID produced better bucketing.
+  String hash = "${Math.round(label.hashCode() / id) % 17}"
+  // Colors were relatively easy to differentiate (on a white background)
+  // Some colors were a tad dark (on a black background)
+  Map hashToColor = [
+    '-16': '#696969',   // dim gray
+    '-15': '#708090',   // slate gray
+    '-14': '#4B0082',   // indigo
+    '-13': '#0000FF',   // blue
+    '-12': '#4682B4',   // steel blue
+    '-11': '#4169E1',   // royal blue
+    '-10': '#1E90FF',   // dodger blue
+     '-9': '#6495ED',   // corn flower blue
+     '-8': '#00BFFF',   // deep sky blue
+     '-7': '#008080',   // teal
+     '-6': '#20B2AA',   // light sea green
+     '-5': '#00CED1',   // dark turquoise
+     '-4': '#228B22',   // forest green
+     '-3': '#32CD32',   // lime green
+     '-2': '#00FF00',   // lime
+     '-1': '#6B8E23',   // olive drab
+      '0': '#808000',   // olive
+      '1': '#8B4513',   // saddle brown
+      '2': '#B8860B',   // dark golden rod
+      '3': '#DAA520',   // golden rod
+      '4': '#800000',   // maroon
+      '5': '#FF0000',   // red
+      '6': '#FF1493',   // deep pink
+      '7': '#CD5C5C',   // indian red
+      '8': '#D2691E',   // chocolate
+      '9': '#FF8000',   // orange
+     '10': '#8B008B',   // dark magenta
+     '11': '#9400D3',   // dark violet
+     '12': '#7B68EE',   // medium slate blue
+     '13': '#9370DB',   // medium purple
+     '14': '#C71585',   // medium violet-red
+     '15': '#FF00FF',   // magenta / fuchsia
+     '16': '#DA70D6',   // orchid
+     '17': '#DB7093',   // pale violet red
+  ]
+  //Integer hash = identityHashCode(label)
+  return """<span style="color: ${hashToColor[hash]};">${label}</span>"""
+}
+
+String stripFancy(String html) {
+  return html.replaceAll(/<\/?[^>]*>/, '')
 }
 
 void logTrace(String fnName, String s) {
   // Fails closed if logLevel is missing.
   if ((state.logLevel ?: 5) > 4) {
-    log.trace("${flexLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
+    log.trace("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
   }
 }
 
 void logDebug(String fnName, String s) {
   // Fails closed if logLevel is missing.
   if ((state.logLevel ?: 5) > 3) {
-    log.debug("${flexLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
+    log.debug("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
   }
 }
 
 void logInfo(String fnName, String s) {
   // Fails closed if logLevel is missing.
   if ((state.logLevel ?: 5) > 2) {
-    log.info("${flexLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
+    log.info("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
   }
 }
 
 void logWarn(String fnName, String s) {
   // Fails closed if logLevel is missing.
   if ((state.logLevel ?: 5) > 1) {
-    log.warn("${flexLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
+    log.warn("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
   }
 }
 
 void logError(String fnName, String s) {
   // No conditional test to ensure all errors appear.
   log.error(
-    "${flexLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}"
+    "${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}"
   )
 }
 

@@ -280,39 +280,30 @@ String stripFancy(String html) {
   return html?.replaceAll(/<\/?[^>]*>/, '')
 }
 
+Boolean ifLogTrace() { return (state.logLevel ?: 5) > 4 }
+Boolean ifLogDebug() { return (state.logLevel ?: 5) > 3 }
+Boolean ifLogInfo()  { return (state.logLevel ?: 5) > 2 }
+Boolean ifLogWarn()  { return (state.logLevel ?: 5) > 1 }
+
 void logTrace(String fnName, String s) {
-  // Fails closed if logLevel is missing.
-  if ((state.logLevel ?: 5) > 4) {
-    log.trace("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
-  }
+  ifLogTrace() && log.trace("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
 }
 
 void logDebug(String fnName, String s) {
-  // Fails closed if logLevel is missing.
-  if ((state.logLevel ?: 5) > 3) {
-    log.debug("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
-  }
+  ifLogDebug() && log.debug("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
 }
 
 void logInfo(String fnName, String s) {
-  // Fails closed if logLevel is missing.
-  if ((state.logLevel ?: 5) > 2) {
-    log.info("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
-  }
+  ifLogInfo() && log.info("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
 }
 
 void logWarn(String fnName, String s) {
-  // Fails closed if logLevel is missing.
-  if ((state.logLevel ?: 5) > 1) {
-    log.warn("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
-  }
+  ifLogWarn() && log.warn("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
 }
 
 void logError(String fnName, String s) {
-  // No conditional test to ensure all errors appear.
-  log.error(
-    "${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}"
-  )
+  // Report all errors (i.e., no conditional test)
+  log.error("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
 }
 
 // --------------------------------------

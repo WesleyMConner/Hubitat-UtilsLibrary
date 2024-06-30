@@ -16,11 +16,11 @@ import com.hubitat.hub.domain.Event as Event
 import com.hubitat.app.DeviceWrapper as DevW
 
 // The Groovy Linter generates NglParseError on Hubitat #include !!!
-#include wesmc.lUtils
+#include WesMC.lUtils
 
 definition (
   name: 'Demo-Utils',
-  namespace: 'wesmc',
+  namespace: 'WesMC',
   author: 'Wesley M. Conner',
   description: 'Exercise lUtils methods',
   singleInstance: true,

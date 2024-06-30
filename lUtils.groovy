@@ -28,7 +28,7 @@
 
 library(
  name: 'lUtils',
- namespace: 'wesmc',
+ namespace: 'WesMC',
  author: 'WesleyMConner',
  description: 'Methods leveraged generally across other libraries and Apps',
  category: 'general purpose',

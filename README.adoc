@@ -1,8 +1,9 @@
 = Hubitat-UtilsLibrary
 Hubitat-compatible code written for Hubitat's Groovy sandbox environment.
 
-IMPORTANT::  Make sure `eventSender()` is tested for App-initiated events.
-As of 19Jun2024 only Device-originated events have been tested.
+
+IMPORTANT:: When PBSG leverages sendEvent(), the `descriptionText` field may
+include "fancy labels" from wesmc.lUtils. The relevant HTML can be removed using `String stripFancy(String html)`, which is also found in wesmc.lUtils.
 
 lUtils.groovy::
 General-purpose functions that can be incorporated into downstream applications via `#include wesmc.lUtils`.
@@ -17,3 +18,51 @@ A _Hubitat Bundle_ for installing the `lUtils.groovy` Hubitat library and the
 packageManifest.json::
 Provided to install the lUtils.zip bundle via the moniker `WesMC-UtilsLibrary` in
 https://hubitatpackagemanager.hubitatcommunity.com/[Hubitat Package Manager (HPM)].
+
+== Advanced Logging
+
+IMPORTANT:: When PBSG leverages sendEvent(), the `descriptionText` field may
+include "fancy labels" from wesmc.lUtils. The relevant HTML can be removed using `String stripFancy(String html)`, which is also found in wesmc.lUtils.
+
+
+
+[width="100%", frame="ends", grid="all", cols=">.^20,^.^20,<.^60"]
+|===
+^h|Name ^h|Arguments{ref} ^h|Description
+3+<|*General Purpose*
+|safeParseInt |String s |`s.toInteger()` with null and empty-string handling.
+|cleanStrings |ArrayList |Prunes nulls, empty strings and duplicates
+|modeNames |_n/a_ |Shorthand for getLocation().getModes()*.name
+|toJson |def thing |Returns a String with 'thing' serialized using JSON.
+|fromJson |String json |Deserializes the JSON String to some 'thing'.
+|eventDetails |Event e |Produces an summary HTML table of the event fields.
+3+<|*Hubitat HTML Utility Methods*
+|blackBar |_n/a_ |Displays a medium-thick HTML black bar.
+|greenBar |_n/a_ |Displays a medium-thick HTML green bar.
+|redBar |_n/a_ |Displays a medium-thick HTML red bar.
+|h1, h2, h3 |String s |Insert text resembling historic HTML headers
+|bullet1, bullet2 |String s |Two levels of HTML bullets
+|alert |String s |Red bordered alert text
+|b, i, bi |def val |Produce bold, italic and bold-italic HTML content.
+|bList |ArrayList list |HTML with easier-to-read data for a list.
+|bMap |Map map |HTML with easier-to-read data for a map.
+|tdBordered |String content |Insert a single table cell <td>..</td> with a border.
+|bMapTable |Map map |Produce HTML Table with one row per Map key and value.
+3+<|*Hubitat Logging Utilities*
+|appHued |InstAppW a |Returns an HTML label with a differentiating color.
+|devHued |DevW \| ChildDevW d |Returns an HTML label with a differentiating color.
+|eventSender |Event e |Returns an HTML label with a differentiating color.
+|fancyLabel |_n/a_ |Returns an HTML label with a differentiating color.
+|stripFancy |String html |Strips the HTML produced by +
+AppHued, devHued, eventSender and fancyLabel.
+|setLogLevel |String logThreshold |Issue logs at or above the threshold +
+TRACE (lowest), DEBUG, INFO, WARN, ERROR (highest)
+|logTrace, logDebug, logInfo, logWarn, logError
+|String fnName, String\|ArrayList s
+|Conditionally send content to Hubitat's Log +
+_Adjusts the volume of data sent to Hubitat logs._
+|ifLogTrace, ifLogDebug, ifLogInfo, ifLogWarn
+|_n/a_
+|Conditional test for a code block. +
+_Don't execute an expensive code block unless the log level is active._
+|===

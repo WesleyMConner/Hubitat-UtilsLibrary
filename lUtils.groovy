@@ -25,7 +25,6 @@
 //   - import java.lang.Math as Math
 //   - import java.lang.Object as Object
 
-
 library(
  name: 'lUtils',
  namespace: 'WesMC',
@@ -66,6 +65,8 @@ String toJson(def thing) {
   return output.toJson(thing)
 }
 
+/* groovylint-disable-next-line MethodReturnTypeRequired */
+// NOTE: parseJson(...) is available in the Device driver environment.
 /* groovylint-disable-next-line MethodReturnTypeRequired */
 def fromJson(String json) {
   def result

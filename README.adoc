@@ -30,6 +30,7 @@ include "fancy labels" from wesmc.lUtils. The relevant HTML can be removed using
 |===
 ^h|Name ^h|Arguments{ref} ^h|Description
 3+<|*General Purpose*
+|airGap |Map m |Copies all source <k, v> pairs to the new, returned Map.
 |safeParseInt |String s |`s.toInteger()` with null and empty-string handling.
 |cleanStrings |ArrayList |Prunes nulls, empty strings and duplicates
 |modeNames |_n/a_ |Shorthand for getLocation().getModes()*.name

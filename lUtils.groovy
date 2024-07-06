@@ -39,6 +39,11 @@ library(
 // Convenience Methods
 // -------------------
 
+Map airGap(Map m) {
+  // Copy all source <k, v> pairs to the new, returned Map.
+  return m.findAll { k, v -> (k) }
+}
+
 Integer safeParseInt(String s) {
   Integer result = null
   switch (s) {

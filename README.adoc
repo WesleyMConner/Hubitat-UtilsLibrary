@@ -1,41 +1,84 @@
 = Hubitat-UtilsLibrary
 Hubitat-compatible code written for Hubitat's Groovy sandbox environment.
 
+The *Apps | Devices* in the *WesMC* namespace utilize this foundational library. This library can be used in isolation. Key features include:
 
-IMPORTANT:: When PBSG leverages sendEvent(), the `descriptionText` field may
-include "fancy labels" from wesmc.lUtils. The relevant HTML can be removed using `String stripFancy(String html)`, which is also found in wesmc.lUtils.
+HTML-like wrapper functions for use in Hubitat Pages AND Logs: ::
+```
+paragraph h1('My Top-Level Heading')
+paragraph h2('My Second-Level Heading')
+paragraph h2('My Second-Level Heading')
 
-lUtils.groovy::
-General-purpose functions that can be incorporated into downstream applications via `#include wesmc.lUtils`.
+log.info h1('My Top-Level Heading')
+log.info bullet1('First level bullet')
+log.info bullet2('Second level bullet')
+log.info "Received the following event:<br/>${eventDetails(e)}"
+log.trace "Results Map (highlighted values): ${bMap(results)}""
+log.trace "Results Map (as table): ${bMapTable(results)}""
+log.trace "Options List (highlighted values): ${bList(options)}"
+```
 
-DemoUtils.groovy::
-Hubitat-compatible application source code that illustrates lUtils methods.
+Colorized and Conditional Logging (sample image): ::
+```
+logInfo('fnName', 'some content')` +
+logWarn('fnName', "some ${b('important')} content')` +
+if (ifLogDebug()) {
+  Map x = expensiveMethod1()
+  ArrayList y = expensiveMethod2()
+  logDebug('fnName', ['This text appears to right of fnName.',
+    bMap(x),          // New row with Map's values in bold.
+    'My Table X',     // A text row
+    bMapHtml(x),      // Map as HTML table, one row per <k, v>
+    "y: ${bList(y)}"  // The list's contents are in bold.
+  ])
+```
 
-lUtils.zip::
-A _Hubitat Bundle_ for installing the `lUtils.groovy` Hubitat library and the
-`Demo-Utils.groovy` Hubitat application.
+== Installation Options
+There are several different ways to install this library and/or the demonstration application.
+
+IMPORTANT: The *Hubitat Package Manager (HPM)* is the preferred installation mechanism. If new versions of a package are made available, HPM offers an automated update facility. All other installation mechanisms are brutally manual.
+
+lUtils.groovy (Hubitat Library)::
+To install *only the library* using the Hubitat GUI ... +
+*(1)* `Developer Tools` → `Libraries code` → `+ New Library` → then ... +
+_Paste the contents of *lUtils.groovy* into the edit window → click the *Save* button._ +
+*(2)* The library should be available for import.
+
+DemoUtils.groovy (Hubitat Application)::
+To install *only the demonstration App* _(which requires the library)_ using the Hubitat GUI ... +
+*(1)* `Developer Tools` → `Apps code` → `Add User App` → then ... +
+_Paste the contents of *Demo-Utils.groovy* into the edit window and click the *Save* button._ +
+*(2)* Use `Apps` → `+ Add User App` and select `Demo-Utils` to install the application.
+
+lUtils.zip (Hubitat Bundle)::
+To install *the library AND the demonstration App*  using the Hubitat GUI ... +
+*(1)* `Developer Tools` → `Bundles` → `Import .ZIP` +
+Provide the *UtilsLibrary.zip* file (a) from a copy on the local file system, (b) using a URL, or (c) by dragging and dropping the zip file. +
+*(2)* Use `Apps` → `+ Add User App` and select `Demo-Utils` to install the application.
 
 packageManifest.json::
-Provided to install the lUtils.zip bundle via the moniker `WesMC-UtilsLibrary` in
-https://hubitatpackagemanager.hubitatcommunity.com/[Hubitat Package Manager (HPM)].
+Make sure that the *Hubitat Package Manager (HPM)* is installed. +
+https://hubitatpackagemanager.hubitatcommunity.com[HPM Hubitat Community] · https://hubitatpackagemanager.hubitatcommunity.com/installing.html[Installing HPM] · https://bit.ly/3VfykH9[HpmBundle.ZIP] +
+In a Nutshell: (1) Install the HpmBundle.ZIP then (2) Install the *Hubitat Package Manager* application (available via the bundle). (3) In HPM `install` → `Browse by Tags` (allow any refreshing to occur) → Choose the tag "utility" and click "Next" → I N C O M P L E T E
+
+A https://hubitatpackagemanager.hubitatcommunity.com/[Hubitat Package Manager (HPM)] package manifest used to make the `lUtils.zip` bundle available via the moniker `WesMC-UtilsLibrary` in HPM.
 
 == Advanced Logging
 
 IMPORTANT:: When PBSG leverages sendEvent(), the `descriptionText` field may
 include "fancy labels" from wesmc.lUtils. The relevant HTML can be removed using `String stripFancy(String html)`, which is also found in wesmc.lUtils.
 
-
-
 [width="100%", frame="ends", grid="all", cols=">.^20,^.^20,<.^60"]
 |===
 ^h|Name ^h|Arguments{ref} ^h|Description
 3+<|*General Purpose*
-|airGap |Map m |Copies all source <k, v> pairs to the new, returned Map.
+returned Map.
 |safeParseInt |String s |`s.toInteger()` with null and empty-string handling.
 |cleanStrings |ArrayList |Prunes nulls, empty strings and duplicates
 |modeNames |_n/a_ |Shorthand for getLocation().getModes()*.name
 |toJson |def thing |Returns a String with 'thing' serialized using JSON.
-|fromJson |String json |Deserializes the JSON String to some 'thing'.
+|[line-through]#fromJson# parseJson |String json |Deserialize a JSON String. +
+_[The `fromJson()` implementation is not necessary. Hubitat's https://docs2.hubitat.com/en/developer/common-methods-object[Common Methods Object] provides `parseJson()`.]_
 |eventDetails |Event e |Produces an summary HTML table of the event fields.
 3+<|*Hubitat HTML Utility Methods*
 |blackBar |_n/a_ |Displays a medium-thick HTML black bar.
@@ -59,11 +102,16 @@ AppHued, devHued, eventSender and fancyLabel.
 |setLogLevel |String logThreshold |Issue logs at or above the threshold +
 TRACE (lowest), DEBUG, INFO, WARN, ERROR (highest)
 |logTrace, logDebug, logInfo, logWarn, logError
-|String fnName, String\|ArrayList s
-|Conditionally send content to Hubitat's Log +
-_Adjusts the volume of data sent to Hubitat logs._
+|String fnName, +
+String\|ArrayList x
+|Conditionally send content (`x`) from method (`fnName`) to Hubitat's Log. _[Hubitat's GUI has filters for reviewing log data received by Hubitat. This facility reduces the data *sent* to Hubitat. Typically, more data is good during development and heavy debugging, but bad as a steady-state solution.]_
 |ifLogTrace, ifLogDebug, ifLogInfo, ifLogWarn
 |_n/a_
-|Conditional test for a code block. +
-_Don't execute an expensive code block unless the log level is active._
+|These conditional tests can be used to limit executing expensive statements or code blocks that exist to support logging. +
+*Examples:* +
+`ifLogDebug() && <statement>` +
+or +
+`if (ifLogDebug()) { <code-block> }`
 |===
+
+

@@ -65,9 +65,8 @@ String toJson(def thing) {
   return output.toJson(thing)
 }
 
-/* groovylint-disable-next-line MethodReturnTypeRequired */
-// NOTE: parseJson(...) is available in the Device driver environment.
-/* groovylint-disable-next-line MethodReturnTypeRequired */
+// Prefer parseJson() over fromJson()
+// See https://docs2.hubitat.com/en/developer/common-methods-object
 def fromJson(String json) {
   def result
   if (json) {
@@ -199,11 +198,6 @@ String bMapTable(Map map) {
 // Threshold-Based Logging
 // -----------------------
 
-void setLogLevel(String logThreshold) {
-  Map logThresholdToLogLevel = [ TRACE: 5, DEBUG: 4, INFO: 3, WARN: 2, ERROR: 1 ]
-  atomicState['logLevel'] = logThresholdToLogLevel."${logThreshold}" ?: 'INFO'
-}
-
 String appHued(InstAppW a) {
 log.info("appHUed a is ${a.class}")
   // Allow any caller to get a fancy label for an App.
@@ -279,6 +273,11 @@ String fancyLabel(pLabel = null, pId = null) {
 
 String stripFancy(String html) {
   return html?.replaceAll(/<\/?[^>]*>/, '')
+}
+
+void setLogLevel(String logThreshold) {
+  Map logThresholdToLogLevel = [ TRACE: 5, DEBUG: 4, INFO: 3, WARN: 2, ERROR: 1 ]
+  atomicState['logLevel'] = logThresholdToLogLevel."${logThreshold}" ?: 'INFO'
 }
 
 Boolean ifLogTrace() { return (state.logLevel ?: 5) > 4 }

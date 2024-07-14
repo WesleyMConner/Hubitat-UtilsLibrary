@@ -1,3 +1,7 @@
+// IF YOU DO NOT SEE FORMATTED OUTPUT.
+// CONSIDER INSTALLING AN ASCIIDOC BROWSER EXTENSION:
+// https://docs.asciidoctor.org/browser-extension/install/
+
 = Hubitat-UtilsLibrary
 Hubitat-compatible code written for Hubitat's Groovy sandbox environment.
 
@@ -66,7 +70,7 @@ A https://hubitatpackagemanager.hubitatcommunity.com/[Hubitat Package Manager (H
 == Advanced Logging
 
 IMPORTANT:: When PBSG leverages sendEvent(), the `descriptionText` field may
-include "fancy labels" from wesmc.lUtils. The relevant HTML can be removed using `String stripFancy(String html)`, which is also found in wesmc.lUtils.
+include "fancy labels" from WesMC.lUtils. The relevant HTML can be removed using `String stripFancy(String html)`, which is also found in WesMC.lUtils.
 
 [width="100%", frame="ends", grid="all", cols=">.^20,^.^20,<.^60"]
 |===

@@ -2,20 +2,19 @@
   "packageName": "WesMC-UtilsLibrary",
   "author": "Wesley M. Conner",
   "version": "0.1.4",
-  "releaseNotes": "Version used in first WesMC-HubitatDevice release.",
+  "releaseNotes": "Updated in support of new WesMC-PBSGDevice.",
   "dateReleased": "2024-07-14",
   "minimumHEVersion": "2.3.9.158",
-  "documentationLink": "https://github.com/WesleyMConner/Hubitat-UtilsLibrary/blob/main/README.adoc",
-  "licenseFile": "https://github.com/WesleyMConner/Hubitat-UtilsLibrary/blob/main/LICENSE",
+  "documentationLink": "https://raw.githubusercontent.com/WesleyMConner/Hubitat-UtilsLibrary/main/README.adoc",
   "tags": [ "Tools & Utilities" ],
   "bundles" : [
 		{
       "id": "efadea22-e44c-4dc4-a73e-3ac4d975e12a",
-      "name": "UtilsLibrary",
-      "namespace": "wesmc",
+      "name": "WesMC-UtilsLibrary",
+      "namespace": "WesMC",
       "category": "Convenience",
-      "location": "https://raw.githubusercontent.com/WesleyMConner/Hubitat-UtilsLibrary/main/WesMCUtilsLibrary_Bundle.zip",
-      "description": "General-purpose functions leveraged in downstream WesMC applications",
+      "location": "https://raw.githubusercontent.com/WesleyMConner/Hubitat-UtilsLibrary/main/WesMC-UtilsLibrary-Bundle.zip",
+      "description": "General-purpose functions leveraged in downstream WesMC Apps and Devices",
       "required": true
 		}
 	]

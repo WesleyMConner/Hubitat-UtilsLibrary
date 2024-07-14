@@ -3,7 +3,7 @@
   "author": "Wesley M. Conner",
   "version": "0.1.4",
   "releaseNotes": "Version used in first WesMC-HubitatDevice release.",
-  "dateReleased": "2024-06-30",
+  "dateReleased": "2024-07-14",
   "minimumHEVersion": "2.3.9.158",
   "documentationLink": "https://github.com/WesleyMConner/Hubitat-UtilsLibrary/blob/main/README.adoc",
   "licenseFile": "https://github.com/WesleyMConner/Hubitat-UtilsLibrary/blob/main/LICENSE",
@@ -14,7 +14,7 @@
       "name": "UtilsLibrary",
       "namespace": "wesmc",
       "category": "Convenience",
-      "location": "https://raw.githubusercontent.com/WesleyMConner/Hubitat-UtilsLibrary/main/UtilsLibrary.zip",
+      "location": "https://raw.githubusercontent.com/WesleyMConner/Hubitat-UtilsLibrary/main/WesMCUtilsLibrary_Bundle.zip",
       "description": "General-purpose functions leveraged in downstream WesMC applications",
       "required": true
 		}

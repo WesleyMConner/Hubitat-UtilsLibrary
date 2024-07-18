@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------------
-// Demo-Utils - Exercise functions from the lUtils library.
+// Demo-Utils - Demo functions from the lUtils library.
 //
 // Copyright (C) 2023-Present Wesley M. Conner
 //
@@ -12,8 +12,16 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
 //   implied.
 // ---------------------------------------------------------------------------------
-import com.hubitat.hub.domain.Event as Event
+import com.hubitat.app.ChildDeviceWrapper as ChildDevW
 import com.hubitat.app.DeviceWrapper as DevW
+import com.hubitat.app.InstalledAppWrapper as InstAppW
+import com.hubitat.hub.domain.Event as Event
+import groovy.json.JsonOutput as JsonOutput
+import groovy.json.JsonSlurper as JsonSlurper
+import groovy.transform.Field
+import java.lang.Math as Math
+import java.lang.Object as Object
+import java.util.concurrent.ConcurrentHashMap
 
 // The Groovy Linter generates NglParseError on Hubitat #include !!!
 #include WesMC.lUtils
@@ -22,7 +30,7 @@ definition (
   name: 'Demo-Utils',
   namespace: 'WesMC',
   author: 'Wesley M. Conner',
-  description: 'Exercise lUtils methods',
+  description: 'Demo lUtils methods',
   singleInstance: true,
   iconUrl: '',
   iconX2Url: ''
@@ -42,101 +50,228 @@ preferences {
     //---------------------------------------------------------------------------------
     app.updateLabel("Demo-Utils (${app.id})")
     section {
-      ArrayList ex1 = [null, 'a', 'a', 'b', 'c', null, 'a']
-      ArrayList ex2 = [null, 'a', 'd', 'b', 'c', null, 'a']
-      ArrayList ex3 = [null, 'a', 'c', null, 'd', 'b ', 'a']
-      paragraph """
-        <b>safeParseInt() Examples</b>
-          safeParseInt(): ${safeParseInt()}
-          safeParseInt(''): ${safeParseInt('')}
-          safeParseInt('0'): ${safeParseInt('0')}
-          safeParseInt('-51'): ${safeParseInt('-51')}
-          safeParseInt('22'): ${safeParseInt('22')}
-
-        <b>cleanStrings() Examples</b>
-          cleanStrings(${ex1}) -> ${cleanStrings(ex1)}
-          cleanStrings(${ex2}) -> ${cleanStrings(ex2)}
-          cleanStrings(${ex3}) -> ${cleanStrings(ex3)}
-
-        <b>modeNames() Example</b>
-          ${modeNames()}
-
-        <b>blackBar(), greenBar() and redBar() Examples</b>
-          ${blackBar()}
-          ${greenBar()}
-          ${redBar()}
-
-        ${h1('h1(...) Header Level 1 Example')}
-
-        ${h2('h2(...) Header Level 2 Example')}
-
-        ${h3('h3(...) Header Level 3 Example')}
-
-        ${bullet1('bullet1(...) Example')}
-
-        ${bullet2('bullet2(...) Example')}
-
-        ${b('bold text example')}
-        ${i('italic text example')}
-        ${bi('bold italic text example')}
-
-      ${h2('To complete the Demo ...')}
-        Click <b>"Done"</b> and <b>Review</b> the Hubitat Logs for:
-          (1) Log thresholding examples
-              setLogLevel(), logTrace(), logDebug(), logInfo(), logWarn(), logError()
-          (2) Examples of switchState(DevW d)
-          (3) Examples of eventDetails(Event e) <i>(in a VSW subscription callback)</i>
-      """
+      paragraph([
+        h1('Header Level 1'),
+        h2('Header Level 2'),
+        h3('Header Level 3')
+      ].join('<br/>'))
+      demoBullets()
+      demoTextEmphasis()
+      demoMapToTable()
+      demoParseInt()
+      demoCleanStrings()
+      demoModeNames()
+      demoColorBars()
+      demoAlert()
+      demoTdBordered()
+      demoColorTable()
+      exerciseHuedCache()
+      testsRunWhenDoneIsClicked()
     }
   }
 }
 
-void installed() {
-  unsubscribe()
-  initialize()
+void demoBullets() {
+  paragraph([
+    h1('Demo Bullets'),
+    bullet1('bullet1()'),
+    bullet2('bullet2()'),
+    bullet3('bullet3()'),
+    square1('square1()'),
+    square2('square2()'),
+    square3('square3()')
+  ].join('<br/>'))
 }
 
-void uninstalled() {
+void demoTextEmphasis() {
+  ArrayList x = ['one', 'two', 'three', 'four']
+  Map y = [a: 'apple', b: 'banana', c: 'cantelope']
+  paragraph([
+    h1('Demo Text Emphasis'),
+    "b(..): ${b('This is bold')}",
+    "i(..): ${i('This is italic')}",
+    "bi(..): ${bi('This is bold & italic')}",
+    "List x: ${x}",
+    "bList(x): ${bList(x)}",
+    "Map y: ${y}",
+    "bMap(y): ${bMap(y)}"
+  ].join('<br/>'))
+}
+
+void demoMapToTable() {
+  Map y = [a: 'apple', b: 'banana', c: 'cantelope']
+  paragraph([
+    h1('Demo mapToTable()'),
+    b('With Borders - mapToTable(y, true)'),
+    mapToTable(y, true),
+    b('Without Borders - mapToTable(y, false)'),
+    mapToTable(y, false)
+  ].join('<br/>'))
+}
+
+void demoParseInt() {
+  paragraph([
+    h1('Demo safeParseInt()'),
+    "safeParseInt(): ${safeParseInt()}",
+    "safeParseInt(''): ${safeParseInt('')}",
+    "safeParseInt('0'): ${safeParseInt('0')}",
+    "safeParseInt('-51'): ${safeParseInt('-51')}",
+    "safeParseInt('22'): ${safeParseInt('22')}"
+  ].join('<br/>'))
+}
+
+void demoCleanStrings() {
+  ArrayList ex1 = [null, 'a', 'a', 'b', 'c', null, 'a']
+  ArrayList ex2 = [null, 'a', 'd', 'b', 'c', null, 'a']
+  ArrayList ex3 = [null, 'a', 'c', null, 'd', 'b ', 'a']
+  paragraph([
+    h1('Demo cleanStrings()'),
+    "cleanStrings(${ex1}) -> ${cleanStrings(ex1)}",
+    "cleanStrings(${ex2}) -> ${cleanStrings(ex2)}",
+    "cleanStrings(${ex3}) -> ${cleanStrings(ex3)}"
+  ].join('<br/>'))
+}
+
+void demoModeNames() {
+  paragraph([
+    h1('Demo modeNames()'),
+    "modeNames() -> ${modeNames()}"
+  ].join('<br/>'))
+}
+
+void demoColorBars() {
+  paragraph([
+    h1('Demo Color Bars'),
+    h2('blackBar()'),
+    blackBar(),
+    h2('greenBar()'),
+    greenBar(),
+    h2('redBar()'),
+    redBar(),
+  ].join('<br/>'))
+}
+
+void demoAlert() {
+  paragraph([
+    h1('Demo Alert'),
+    alert('This is a sample alert!')
+  ].join('<br/>'))
+}
+
+void demoTdBordered() {
+  paragraph([
+    h1('Demo Individually-Bordered Table Cell'),
+    """<table><tr><td>one</td><td>two</td><td>three</td></tr>
+    <tr><td>four</td>${tdBordered('five')}<td>six</td></tr>
+    <tr><td>seven</td><td>eight</td>${tdBordered('nine')}</tr>"""
+  ].join('<br/>'))
+}
+
+void demoColorTable() {
+  paragraph([
+    h1('Color Hued() Colors Table'),
+    getFgBgTable()
+  ].join('<br/>'))
+}
+
+void exerciseHuedCache() {
+  paragraph([
+    h1('Exercise Hued Cache'),
+    *addTestDataToCache(),
+    *removeTestDataFromCache()
+  ].join('<br/>'))
+}
+
+ArrayList addTestDataToCache() {
+  return [
+    h2('CREATING SAMPLE ENTRIES IN HUED_CACHE:'),
+    "hued('Apple', 15) -> <code>${hued('Apple', 15)}</code>",
+    "hued('Banana', 1015) -> ${hued('Banana', 1015)}",
+    "hued('Carrot', 2015) -> ${hued('Carrot', 2015)}",
+    "hued('Donut', 3015) -> ${hued('Donut', 3015)}",
+    "hued('Egg', 4015) -> ${hued('Egg', 4015)}",
+    "hued('FrenchFries', 5015) -> ${hued('FrenchFries', 5015)}",
+    "hued('Guava', 6015) -> ${hued('Guava', 6015)}",
+    "hued('HotDog', 7015) -> ${hued('HotDog', 7015)}",
+    *getHuedCacheContents()
+  ]
+}
+
+ArrayList removeTestDataFromCache() {
+  // Iterate an in-memory snapshot of the ConcurrentHashMap to
+  // direct ConcurrentHashMap key removals.
+  ArrayList results = [h2('REMOVING SAMPLE ENTRIES FROM HUED_CACHE')]
+  HUED_CACHE.findAll{ k1, v1 -> (k1) } each { k, v ->
+    if (['Apple_15', 'Banana_1015', 'Carrot_2015', 'Donut_3015',
+      'Egg_4015', 'FrenchFries_5015', 'Guava_6015',
+      'HotDog_7015'].contains(k)) {
+      results << "Removing key: ${k}"
+      HUED_CACHE.remove(k)
+    }
+  }
+  return [*results, *getHuedCacheContents()]
+}
+
+void testsRunWhenDoneIsClicked() {
+  paragraph([
+    h1('Tests that Run When "Done" is clicked ...'),
+    bullet2('The log functions in this library:'),
+    bullet3('Can reduce log data sent to Hubitat.'),
+    bullet3('The method "setLogLevel()" adjusts what is sent.'),
+    bullet3("${b('setLogLevel("TRACE")')} sends everything."),
+    bullet3("${b('setLogLevel("DEBUG")')} suppresses TRACE."),
+    bullet3("${b('setLogLevel("INFO")')} suppresses TRACE & DEBUG."),
+    bullet3("${b('setLogLevel("WARN")')} suppresses TRACE, DEBUG & INFO."),
+    bullet3("${b('setLogLevel("ERROR")')} suppresses TRACE, DEBUG, INFO & WARN."),
+    bullet3('ERROR is never suppressed.'),
+    h2("${b('demoLogLevels()')} is called MULTIPLE TIMES to issue:"),
+    bullet2("A sample ${b('logTrace()')} call"),
+    bullet2("A sample ${b('logDebug()')} call"),
+    bullet2("A sample ${b('logInfo()')} call"),
+    bullet2("A sample ${b('logWarn()')} call"),
+    bullet2("A Sample ${b('logError()')} call"),
+    h2("Each time ${b('demoLogLevels()')} is called, the log level is reduced."),
+    bullet2("In loop #1 all five samples are sent."),
+    bullet2("In loop #2 ${b('logTrace()')} is suppressed."),
+    bullet2("In loop #3 ${b('logDebug()')} is also suppressed"),
+    bullet2("In loop #4 ${b('logInfo()')} is also suppressed"),
+    bullet2("In loop #5 ${b('logWarn()')} is also suppressed")
+  ].join('<br/>'))
+}
+
+void installed() {
+  // Called when a bare device is first constructed.
+  demoLogFiltering()
 }
 
 void updated() {
-  unsubscribe()
-  initialize()
+  // Called when a human uses the Hubitat GUI's Device drilldown page to edit
+  // preferences (aka settings) AND presses 'Save Preferences'.
+  demoLogFiltering()
 }
 
-void initialize() {
-  // Exercise Log Levels
+void demoLogFiltering() {
   ['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR'].each { level ->
-    setLogLevel('INFO')
-    logInfo(
-      'initialize',
-      "With log level ${b(level)}, calling logTrace()..logError()."
-    )
+    log.info("Calling demoLogLevels() with setLogLevel(${b(level)}):")
     setLogLevel(level)
-    logTrace('initialize', "Testing 1, 2, 3 .. logTrace() example at level=${b(level)}")
-    logDebug('initialize', "Testing 1, 2, 3 .. logDebug() example at level=${b(level)}")
-    logInfo('initialize', "Testing 1, 2, 3 .. logInfo() example at level=${b(level)}")
-    logWarn('initialize', "Testing 1, 2, 3 .. logWarn() example at level=${b(level)}")
-    logError('initialize', "Testing 1, 2, 3 .. logError() example at level=${b(level)}")
+    demoLogLevels()
   }
-  // Exercise switchState(d)
-  setLogLevel('INFO')
-  String demoDNI = 'demo-utils-vsw'
-  DevW d = getChildDevice(demoDNI) ?: addChildDevice('hubitat', 'Virtual Switch', demoDNI)
-  subscribe(d, vswEventHandler, ['filterEvents': true])
-  logInfo('#245', "Child Device: ${demoDNI} has initial state: ${switchState(d)}")
-  d.on()
-  pauseExecution(50)  // 50ms for device to respond to on()
-  logInfo('#248', "After ${demoDNI}.on(), has state: ${switchState(d)}")
-  d.off()
-  pauseExecution(50)  // 50ms for device to respond to off()
-  logInfo('#251', "After ${demoDNI}.off(), has state: ${switchState(d)}")
-  deleteChildDevice(demoDNI)
 }
 
-void vswEventHandler(Event e) {
-  logInfo(
-    'vswEventHandler',
-    "eventDetails(Event e): ${eventDetails(e)}"
-  )
+void demoLogLevels() {
+  logTrace('demoLogLevels', 'logTrace(..) test only')
+  logDebug('demoLogLevels', 'logDebug(..) test only')
+  logInfo('demoLogLevels', 'logInfo(..) test only')
+  logWarn('demoLogLevels', 'logWarn(..) test only')
+  logError('demoLogLevels', 'logError(..) test only')
 }
+
+// UNUSED / UNSUPPORTED
+
+//-> void uninstalled() {
+//->   // Called on device tear down.
+//-> }
+
+//-> void initialize() {
+//->   // Called on hub startup (per capability "Initialize").
+//-> }

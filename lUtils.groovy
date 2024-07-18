@@ -22,8 +22,12 @@
 //   - import com.hubitat.hub.domain.Event as Event
 //   - import groovy.json.JsonOutput as JsonOutput
 //   - import groovy.json.JsonSlurper as JsonSlurper
+//   - import groovy.transform.Field
 //   - import java.lang.Math as Math
 //   - import java.lang.Object as Object
+//   - import java.util.concurrent.ConcurrentHashMap
+
+@Field static ConcurrentHashMap<String, String> HUED_CACHE = [:]
 
 library(
  name: 'lUtils',
@@ -35,9 +39,75 @@ library(
  importUrl: 'TBD'
 )
 
-// -------------------
-// Convenience Methods
-// -------------------
+// HEADERS
+String heading(String s, size, font) {
+  return "<span style='font-size: ${size}; font-family: ${font};'>${s}</span>"
+}
+String h1(String s) { return heading(s, '2em', 'Roboto') }
+String h2(String s) { return heading(s, '1.3em', 'Roboto') }
+String h3(String s) { return heading(s, '1.1em', 'Roboto') }
+
+// BULLETS
+String bullet(String s, String bullet, Integer before, Integer after) {
+  return "${'&nbsp;' * before}${bullet}${'&nbsp;' * after}${s}"
+}
+String bullet1(String s) { bullet(s, '&#x25CF;', 0, 2) } // Was: x2022
+String bullet2(String s) { bullet(s, '&#x25CF;', 2, 2) }
+String bullet3(String s) { bullet(s, '&#x25CF;', 4, 2) }
+String square1(String s) { bullet(s, '&#x25FC;', 0, 2) }
+String square2(String s) { bullet(s, '&#x25FC;', 2, 2) }
+String square3(String s) { bullet(s, '&#x25FC;', 4, 2) }
+
+// TEXT EMPHASIS
+
+String b(def val) {
+  String retVal = '<b>null</b>'
+  if (val == '0') {
+    retVal = '<b>0</b>'
+  } else if (val == 0) {
+    retVal = '<b>0</b>'
+  } else if (val) {
+    retVal = "<b>${val}</b>"
+  }
+  return retVal
+}
+
+String i(def val) { return val ? "<i>${val}</i>" : '<i>null</i>' }
+
+String bi(def val) { return i(b(val)) }
+
+String bList(ArrayList list) {
+  return '[' + list.inject([]) { s, e -> s << "${b(e)} " }.join(', ') + ']'
+}
+
+String bMap(Map map) {
+  ArrayList terms = []
+  map.each { k, v -> terms.add("${i(k)}: ${b(v)}") }
+  return '[' + terms.join(', ') + ']'
+}
+
+// MAP TO TABLE
+
+String mapToTable(Map m, Boolean borders = true) {
+  ArrayList t = [ borders ? '<table border="1">' : '<table>' ]
+  m.each { k, v ->
+    t << "<tr><td align='right'>${i(k)}${borders ? '' : ':'}</td>"
+    t << "<td>${b(v)}</td></tr>"
+  }
+  t << '</table>'
+  return t.join()
+}
+
+String eventDetails(Event e) {
+  logInfo('eventDetails', ['',
+    "getObjectClassName(e): ${getObjectClassName(e)}",
+    "e: ${e}",
+    "e: ${e as Map}"
+  ])
+  return mapToTable(e)
+}
+
+// CONVENIENCE METHODS
 
 Integer safeParseInt(String s) {
   Integer result = null
@@ -52,7 +122,7 @@ Integer safeParseInt(String s) {
 }
 
 ArrayList cleanStrings(ArrayList list) {
-  // Prunes nulls, empty strings and dups
+  // Prune nulls, empty strings and dups
   return list.findAll { s -> s ?: null }.unique()
 }
 
@@ -65,219 +135,164 @@ String toJson(def thing) {
   return output.toJson(thing)
 }
 
-// Prefer parseJson() over fromJson()
-// See https://docs2.hubitat.com/en/developer/common-methods-object
-def fromJson(String json) {
-  def result
-  if (json) {
-    def slurper = new JsonSlurper()
-    result = slurper.parseText(json)
+// HTML COLOR BARS
+String blackBar() { return '<hr style="border: 5px solid black;"/>' }
+String greenBar() { return '<hr style="border: 5px solid green;"/>' }
+String redBar() { return '<hr style="border: 5px solid red;"/>' }
+
+// HTML ALERT BOX
+String alert(String s, String bgcolor='#FFFF8F', String border='2px') {
+  return [
+    "<span style='display:inline-table;'><table><tr>",
+    "<td style='border: solid ${border} black; background-color: ${bgcolor};'>${b(s)}</td>",
+    "</tr></table></span>"
+  ].join()
+}
+
+// INDIVIDUALLY BORDERED TABLE CELL
+String tdBordered(def content) {
+  return "<td style='border: solid 1px black;'>${content}</td>"
+}
+
+// FOREGROUND AND BACKGROUND HEX COLORS FOR hued()
+
+Map getFgBg() {
+  return [
+    '-39': ['#FF8000', '#FFFFFF'], '-38': ['#FF1493', '#FFFFFF'],
+    '-37': ['#FF00FF', '#FFFFFF'], '-36': ['#FF0000', '#FFFFFF'],
+    '-35': ['#DB7093', '#FFFFFF'], '-34': ['#DAA520', '#FFFFFF'],
+    '-33': ['#DA70D6', '#FFFFFF'], '-32': ['#D2691E', '#FFFFFF'],
+    '-31': ['#CF8500', '#FFFFFF'], '-30': ['#CD5C5C', '#FFFFFF'],
+    '-29': ['#C71585', '#FFFFFF'], '-28': ['#B8560B', '#FFFFFF'],
+    '-27': ['#9400D3', '#FFFFFF'], '-26': ['#9370DB', '#FFFFFF'],
+    '-25': ['#8B4513', '#FFFFFF'], '-24': ['#8B008B', '#FFFFFF'],
+    '-23': ['#808000', '#FFFFFF'], '-22': ['#800000', '#FFFFFF'],
+    '-21': ['#7B68EE', '#FFFFFF'], '-20': ['#708090', '#FFFFFF'],
+    '-19': ['#6B8E23', '#FFFFFF'], '-18': ['#696969', '#FFFFFF'],
+    '-17': ['#6495ED', '#FFFFFF'], '-16': ['#4B0082', '#FFFFFF'],
+    '-15': ['#4682B4', '#FFFFFF'], '-14': ['#4169E1', '#FFFFFF'],
+    '-13': ['#32CD32', '#FFFFFF'], '-12': ['#228B22', '#FFFFFF'],
+    '-11': ['#20B2AA', '#FFFFFF'], '-10': ['#1E90FF', '#FFFFFF'],
+     '-9': ['#00CED1', '#FFFFFF'],  '-8': ['#00BFFF', '#FFFFFF'],
+     '-7': ['#008080', '#FFFFFF'],  '-6': ['#0000FF', '#FFFFFF'],
+     '-5': ['#FFFFFF', '#C05000'],  '-4': ['#FFEA00', '#C05000'],
+     '-3': ['#10DEE1', '#C05000'],  '-2': ['#00FF00', '#C05000'],
+     '-1': ['#FFFFFF', '#9400D3'],   '0': ['#FFEA00', '#9400D3'],
+      '1': ['#FFA000', '#9400D3'],   '2': ['#10DEE1', '#9400D3'],
+      '3': ['#00FF00', '#9400D3'],   '4': ['#FFFFFF', '#808000'],
+      '5': ['#FFEA00', '#808000'],   '6': ['#FFA000', '#808000'],
+      '7': ['#10DEE1', '#808000'],   '8': ['#00FF00', '#808000'],
+      '9': ['#FFFFFF', '#800000'],  '10': ['#FFEA00', '#800000'],
+     '11': ['#FFA000', '#800000'],  '12': ['#FF8888', '#800000'],
+     '13': ['#10DEE1', '#800000'],  '14': ['#00FF00', '#800000'],
+     '15': ['#FFFFFF', '#4B0082'],  '16': ['#FFEA00', '#4B0082'],
+     '17': ['#FFA000', '#4B0082'],  '18': ['#FF8888', '#4B0082'],
+     '19': ['#FF34B3', '#4B0082'],  '20': ['#10DEE1', '#4B0082'],
+     '21': ['#00FF00', '#4B0082'],  '22': ['#FFFFFF', '#008080'],
+     '23': ['#FFEA00', '#008080'],  '24': ['#FFA000', '#008080'],
+     '25': ['#FE6F4F', '#008080'],  '26': ['#10DEE1', '#008080'],
+     '27': ['#00FF00', '#008080'],  '28': ['#FFFFFF', '#0000FF'],
+     '29': ['#FFEA00', '#0000FF'],  '30': ['#FF8888', '#0000FF'],
+     '31': ['#10DEE1', '#0000FF'],  '32': ['#00FF00', '#0000FF'],
+     '33': ['#FFFFFF', '#000000'],  '34': ['#FFEA00', '#000000'],
+     '35': ['#FFA000', '#000000'],  '36': ['#FF8888', '#000000'],
+     '37': ['#FF34B3', '#000000'],  '38': ['#10DEE1', '#000000'],
+     '39': ['#00FF00', '#000000']
+  ]
+}
+
+ArrayList getHuedCacheContents() {
+  return [
+    b('HUED_CACHE CONTENTS:'),
+    '-- begin --',
+    *(HUED_CACHE.collect { k, v ->
+      "${k} → ${v}, stripHued(..): '${stripHued(v)}'"
+    }),
+    '-- end --'
+  ]
+}
+
+String getFgBgTable() {
+  ArrayList html = ['<table rules="all">']
+  html << '<tr><th>Index</th><th>FG</th><th>BG</th><th>Sample</th></tr>'
+  getFgBg().each{ k, fsBg ->
+    String fg = fsBg[0]
+    String bg = fsBg[1]
+    html << "<tr><td align='center'>${k}</td><td>${fg}</td><td>${bg}</td>"
+    html << "<td style='color: ${fg}; background-color: ${bg};'>Sample 123</td></tr>"
+  }
+  html << '</table>'
+  return html.join()
+}
+
+// Offer hued w/ several signatures
+
+String hued(InstAppW a) {
+  String result = 'hued_ERROR'
+  if (a) {
+    result = hued(a.getLabel(), a?.id)
+  } else {
+    logError('hued(InstAppW)', 'Called with null argument')
   }
   return result
 }
 
-String eventDetails(Event e) {
-  String rows = """
-    <tr>
-      <th align='right'>descriptionText</th>
-      <td>${e.descriptionText}</td>
-    </tr>
-    <tr>
-      <th align='right'>displayName</th>
-      <td>${e.displayName}</td>
-    </tr>
-    <tr>
-      <th align='right'>deviceId</th>
-      <td>${e.deviceId} (hubitat)</td>
-    </tr>
-    <tr>
-      <th align='right'>name</th>
-      <td>${e.name}</td>
-    </tr>
-    <tr>
-      <th align='right'>value</th>
-      <td>${e.value}</td>
-    </tr>
-    <tr>
-      <th align='right'>isStateChange</th>
-      <td>${e.isStateChange}</td>
-    </tr>
-    """
-  return "<table>${rows}</table>"
-}
-
-// -----------------------------
-// Convenience HTML-like Methods
-// -----------------------------
-
-String blackBar() {
-  return '<hr style="border: 5px solid black;"/>'
-}
-
-String greenBar() {
-  return '<hr style="border: 5px solid green;"/>'
-}
-
-String redBar() {
-  return '<hr style="border: 5px solid red;"/>'
-}
-
-String h1(String s) {
-  // font-weight: bold;
-  return """<span style='font-size: 2em; font-family: Roboto;'>${s}</span>"""
-}
-
-String h2(String s) {
-  return """<span style='font-size: 1.3em; font-family: Roboto;'>${s}</span>"""
-}
-
-String h3(String s) {
-  return """<span style='font-size: 1.1em; font-family: Roboto;'>${s}</span>"""
-}
-
-String bullet1(String s) {
-  return "&#x2022;&nbsp;&nbsp;${s}"
-}
-
-String bullet2(String s) {
-  return "&nbsp;&nbsp;&nbsp;&#x2022;&nbsp;&nbsp;${s}"
-}
-
-String alert(String s) {
-  return """
-<span style="display:inline-table;"><table><tr>
-  <td style="border: solid 2px black; background-color: #FFFF8F;">${b(s)}</td>
-</tr></table></span>"""
-}
-
-String b(def val) {
-  String retVal = '<b>null</b>'
-  if (val == '0') {
-    retVal = '<b>0</b>'
-  } else if (val == 0) {
-    retVal = '<b>0</b>'
-  } else if (val) {
-    retVal = "<b>${val}</b>"
+String hued(ChildDevW d) {
+  String result = 'hued_ERROR'
+  if (d) {
+    result = hued(d.getDeviceNetworkId(), (d.id as Long))
+  } else {
+    logError('hued(ChildDevW)', 'Called with null argument')
   }
-  return retVal
+  return result
 }
 
-String i(def val) {
-  return val ? "<i>${val}</i>" : '<i>null</i>'
+String hued(DevW d) {
+  String result = 'hued_ERROR'
+  if (d) {
+    result = hued(d.getDeviceNetworkId(), (d.id as Long))
+  } else {
+    logError('hued(DevW)', 'Called with null argument')
+  }
+  return result
 }
 
-String bi(def val) {
-  return i(b(val))
+String hued(Event e) {
+  return hued(e.displayName, e.deviceId)
 }
 
-String bList(ArrayList list) {
-  return '[' + list.inject('') { s, e -> s << "${b(e)}, " } + ']'
+String hued(String sArg = null, Long iArg = null) {
+  String s = sArg ?: app?.getLabel() ?: device?.getDeviceNetworkId()
+  Long i = iArg ?: app?.id ?: (device?.id as Long)
+  String key = "${s}_${i}"
+  String fLabel = HUED_CACHE[key]
+  if (!fLabel) {
+    String index = "${Math.round(s.hashCode() / i) % 39}"
+    ArrayList fgBg = getFgBg()[index]
+    if (fgBg) {
+      fLabel = [
+        "<span style='color: ${fgBg[0]}; background-color: ${fgBg[1]};'>",
+        s,
+        '</span>'
+      ].join()
+      HUED_CACHE[key] = fLabel
+    } else {
+      logError(
+        'hued',
+        "Cache refresh failed for key: ${b(key)} and index: ${b(index)}."
+      )
+    }
+  }
+  return fLabel
 }
 
-String bMap(Map map) {
-  ArrayList terms = []
-  map.each { k, v -> terms.add("${i(k)}: ${b(v)}") }
-  return '[' + terms.join(', ') + ']'
-}
-
-String tdBordered(String content) {
-  return """<td style="border: solid 1px black;">${content}</td>"""
-}
-
-String bMapTable(Map map) {
-  return [ 'Map',
-    "<table rules='all'><tr><th>${i('KEYS')}</th><th>${b('VALUES')}</tr>",
-    map.inject('') { s, k, v ->
-      s << "<tr><td align='right'>${i(k)}</td><td>${b(v)}</td></tr>"
-    },
-    '</table>'
-  ].join()
-}
-
-// -----------------------
-// Threshold-Based Logging
-// -----------------------
-
-String appHued(InstAppW a) {
-log.info("appHUed a is ${a.class}")
-  // Allow any caller to get a fancy label for an App.
-  return fancyLabel(a.getLabel(), a.id.toInteger())
-}
-
-String devHued(ChildDevW d) {
-  // Allow any caller to get a fancy label for a Device.
-  return fancyLabel(d.getDeviceNetworkId(), d.id.toInteger())
-}
-
-String devHued(DevW d) {
-  // Allow any caller to get a fancy label for a Device.
-  return fancyLabel(d.getDeviceNetworkId(), d.id.toInteger())
-}
-
-String eventSender(Event e) {
-  // Returns a fancyLabel for the Application/Device sending the Event.
-  return fancyLabel(e.displayName, e.deviceId)
-}
-
-String fancyLabel(pLabel = null, pId = null) {
-  // Automatically populates data for caller if no parameters are specified.
-  // Methods appHued() and devHued() provide parameters.
-  label = pLabel ?: app?.getLabel() ?: device?.getDeviceNetworkId()
-  id = pId ?: (app?.id ?: device.id).toInteger()
-  // The following is the result of testing
-  //   - Bucket differation was poor when using label.hashCode() only.
-  //   - Multiplying by (a relatively consecutive) ID had limited benefit.
-  //   - Dividing by ID produced better bucketing.
-  String hash = "${Math.round(label.hashCode() / id) % 17}"
-  // Colors were relatively easy to differentiate (on a white background)
-  // Some colors were a tad dark (on a black background)
-  Map hashToColor = [
-    '-16': '#696969',   // dim gray
-    '-15': '#708090',   // slate gray
-    '-14': '#4B0082',   // indigo
-    '-13': '#0000FF',   // blue
-    '-12': '#4682B4',   // steel blue
-    '-11': '#4169E1',   // royal blue
-    '-10': '#1E90FF',   // dodger blue
-     '-9': '#6495ED',   // corn flower blue
-     '-8': '#00BFFF',   // deep sky blue
-     '-7': '#008080',   // teal
-     '-6': '#20B2AA',   // light sea green
-     '-5': '#00CED1',   // dark turquoise
-     '-4': '#228B22',   // forest green
-     '-3': '#32CD32',   // lime green
-     '-2': '#00FF00',   // lime
-     '-1': '#6B8E23',   // olive drab
-      '0': '#808000',   // olive
-      '1': '#8B4513',   // saddle brown
-      '2': '#B8860B',   // dark golden rod
-      '3': '#DAA520',   // golden rod
-      '4': '#800000',   // maroon
-      '5': '#FF0000',   // red
-      '6': '#FF1493',   // deep pink
-      '7': '#CD5C5C',   // indian red
-      '8': '#D2691E',   // chocolate
-      '9': '#FF8000',   // orange
-     '10': '#8B008B',   // dark magenta
-     '11': '#9400D3',   // dark violet
-     '12': '#7B68EE',   // medium slate blue
-     '13': '#9370DB',   // medium purple
-     '14': '#C71585',   // medium violet-red
-     '15': '#FF00FF',   // magenta / fuchsia
-     '16': '#DA70D6',   // orchid
-     '17': '#DB7093',   // pale violet red
-  ]
-  //Integer hash = identityHashCode(label)
-  return """<span style="color: ${hashToColor[hash]};">${label}</span>"""
-}
-
-String stripFancy(String html) {
+String stripHued(String html) {
   return html?.replaceAll(/<\/?[^>]*>/, '')
 }
 
 void setLogLevel(String logThreshold) {
   Map logThresholdToLogLevel = [ TRACE: 5, DEBUG: 4, INFO: 3, WARN: 2, ERROR: 1 ]
-  atomicState['logLevel'] = logThresholdToLogLevel."${logThreshold}" ?: 'INFO'
+  atomicState['logLevel'] = logThresholdToLogLevel."${logThreshold}" ?: 'TRACE'
 }
 
 Boolean ifLogTrace() { return (state.logLevel ?: 5) > 4 }
@@ -286,46 +301,42 @@ Boolean ifLogInfo()  { return (state.logLevel ?: 5) > 2 }
 Boolean ifLogWarn()  { return (state.logLevel ?: 5) > 1 }
 
 void logTrace(String fnName, String s) {
-  ifLogTrace() && log.trace("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
+  ifLogTrace() && log.trace("${hued()}.<b>${fnName}⟮ ⟯</b> → ${s} [${getObjectClassName(this)}]")
+}
+
+void logTrace(String fnName, ArrayList ls, String delim = '<br/>&nbsp&nbsp') {
+  logTrace(fnName, ls.join(delim))
 }
 
 void logDebug(String fnName, String s) {
-  ifLogDebug() && log.debug("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
-}
-
-void logInfo(String fnName, String s) {
-  ifLogInfo() && log.info("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
-}
-
-void logWarn(String fnName, String s) {
-  ifLogWarn() && log.warn("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
-}
-
-void logError(String fnName, String s) {
-  // Report all errors (i.e., no conditional test)
-  log.error("${fancyLabel()}.<b>${fnName}⟮ ⟯</b> → ${s}")
-}
-
-// --------------------------------------
-// ArrayList (vs String) Logging Variants
-// --------------------------------------
-
-void logError(String fnName, ArrayList ls, String delim = '<br/>&nbsp&nbsp') {
-  logError(fnName, ls.join(delim))
-}
-
-void logWarn(String fnName, ArrayList ls, String delim = '<br/>&nbsp&nbsp') {
-  logWarn(fnName, ls.join(delim))
-}
-
-void logInfo(String fnName, ArrayList ls, String delim = '<br/>&nbsp&nbsp') {
-  logInfo(fnName, ls.join(delim))
+  ifLogDebug() && log.debug("${hued()}.<b>${fnName}⟮ ⟯</b> → ${s} [${getObjectClassName(this)}]")
 }
 
 void logDebug(String fnName, ArrayList ls, String delim = '<br/>&nbsp&nbsp') {
   logDebug(fnName, ls.join(delim))
 }
 
-void logTrace(String fnName, ArrayList ls, String delim = '<br/>&nbsp&nbsp') {
-  logTrace(fnName, ls.join(delim))
+void logInfo(String fnName, String s) {
+  ifLogInfo() && log.info("${hued()}.<b>${fnName}⟮ ⟯</b> → ${s} [${getObjectClassName(this)}]")
+}
+
+void logInfo(String fnName, ArrayList ls, String delim = '<br/>&nbsp&nbsp') {
+  logInfo(fnName, ls.join(delim))
+}
+
+void logWarn(String fnName, String s) {
+  ifLogWarn() && log.warn("${hued()}.<b>${fnName}⟮ ⟯</b> → ${s} [${getObjectClassName(this)}]")
+}
+
+void logWarn(String fnName, ArrayList ls, String delim = '<br/>&nbsp&nbsp') {
+  logWarn(fnName, ls.join(delim))
+}
+
+void logError(String fnName, String s) {
+  // Report all errors (i.e., no conditional test)
+  log.error("${hued()}.<b>${fnName}⟮ ⟯</b> → ${s} [${getObjectClassName(this)}]")
+}
+
+void logError(String fnName, ArrayList ls, String delim = '<br/>&nbsp&nbsp') {
+  logError(fnName, ls.join(delim))
 }

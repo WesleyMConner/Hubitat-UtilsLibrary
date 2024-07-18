@@ -70,7 +70,7 @@ A https://hubitatpackagemanager.hubitatcommunity.com/[Hubitat Package Manager (H
 == Advanced Logging
 
 IMPORTANT:: When PBSG leverages sendEvent(), the `descriptionText` field may
-include "fancy labels" from WesMC.lUtils. The relevant HTML can be removed using `String stripFancy(String html)`, which is also found in WesMC.lUtils.
+include "fancy labels" from WesMC.lUtils. The relevant HTML can be removed using `String stripHued(String html)`, which is also found in WesMC.lUtils.
 
 [width="100%", frame="ends", grid="all", cols=">.^20,^.^20,<.^60"]
 |===
@@ -81,8 +81,8 @@ returned Map.
 |cleanStrings |ArrayList |Prunes nulls, empty strings and duplicates
 |modeNames |_n/a_ |Shorthand for getLocation().getModes()*.name
 |toJson |def thing |Returns a String with 'thing' serialized using JSON.
-|[line-through]#fromJson# parseJson |String json |Deserialize a JSON String. +
-_[The `fromJson()` implementation is not necessary. Hubitat's https://docs2.hubitat.com/en/developer/common-methods-object[Common Methods Object] provides `parseJson()`.]_
+|** parseJson |String json |*THIS IS BUILT INTO HUBITAT.* +
+See https://docs2.hubitat.com/en/developer/common-methods-object[Common Methods Object !!!]
 |eventDetails |Event e |Produces an summary HTML table of the event fields.
 3+<|*Hubitat HTML Utility Methods*
 |blackBar |_n/a_ |Displays a medium-thick HTML black bar.
@@ -97,12 +97,12 @@ _[The `fromJson()` implementation is not necessary. Hubitat's https://docs2.hubi
 |tdBordered |String content |Insert a single table cell <td>..</td> with a border.
 |bMapTable |Map map |Produce HTML Table with one row per Map key and value.
 3+<|*Hubitat Logging Utilities*
-|appHued |InstAppW a |Returns an HTML label with a differentiating color.
-|devHued |DevW \| ChildDevW d |Returns an HTML label with a differentiating color.
-|eventSender |Event e |Returns an HTML label with a differentiating color.
-|fancyLabel |_n/a_ |Returns an HTML label with a differentiating color.
-|stripFancy |String html |Strips the HTML produced by +
-AppHued, devHued, eventSender and fancyLabel.
+|hued |InstAppW a |Returns an HTML label with a differentiating color.
+|hued |DevW \| ChildDevW d |Returns an HTML label with a differentiating color.
+|hued |Event e |Returns an HTML label with a differentiating color.
+|hued |_n/a_ |Returns an HTML label with a differentiating color.
+|stripHued |String html |Strips the HTML produced by +
+hued, hued, hued and hued.
 |setLogLevel |String logThreshold |Issue logs at or above the threshold +
 TRACE (lowest), DEBUG, INFO, WARN, ERROR (highest)
 |logTrace, logDebug, logInfo, logWarn, logError

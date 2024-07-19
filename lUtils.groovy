@@ -27,6 +27,7 @@
 //   - import java.lang.Object as Object
 //   - import java.util.concurrent.ConcurrentHashMap
 
+/* groovylint-disable-next-line MethodCount */
 @Field static ConcurrentHashMap<String, String> HUED_CACHE = [:]
 
 library(
@@ -51,12 +52,12 @@ String h3(String s) { return heading(s, '1.1em', 'Roboto') }
 String bullet(String s, String bullet, Integer before, Integer after) {
   return "${'&nbsp;' * before}${bullet}${'&nbsp;' * after}${s}"
 }
-String bullet1(String s) { bullet(s, '&#x25CF;', 0, 2) } // Was: x2022
-String bullet2(String s) { bullet(s, '&#x25CF;', 2, 2) }
-String bullet3(String s) { bullet(s, '&#x25CF;', 4, 2) }
-String square1(String s) { bullet(s, '&#x25FC;', 0, 2) }
-String square2(String s) { bullet(s, '&#x25FC;', 2, 2) }
-String square3(String s) { bullet(s, '&#x25FC;', 4, 2) }
+String bullet1(String s) { return bullet(s, '&#x25CF;', 0, 2) } // Was: x2022
+String bullet2(String s) { return bullet(s, '&#x25CF;', 2, 2) }
+String bullet3(String s) { return bullet(s, '&#x25CF;', 4, 2) }
+String square1(String s) { return bullet(s, '&#x25FC;', 0, 2) }
+String square2(String s) { return bullet(s, '&#x25FC;', 2, 2) }
+String square3(String s) { return bullet(s, '&#x25FC;', 4, 2) }
 
 // TEXT EMPHASIS
 
@@ -143,9 +144,9 @@ String redBar() { return '<hr style="border: 5px solid red;"/>' }
 // HTML ALERT BOX
 String alert(String s, String bgcolor='#FFFF8F', String border='2px') {
   return [
-    "<span style='display:inline-table;'><table><tr>",
+    '<span style="display:inline-table;"><table><tr>',
     "<td style='border: solid ${border} black; background-color: ${bgcolor};'>${b(s)}</td>",
-    "</tr></table></span>"
+    '</tr></table></span>'
   ].join()
 }
 
@@ -215,7 +216,7 @@ ArrayList getHuedCacheContents() {
 String getFgBgTable() {
   ArrayList html = ['<table rules="all">']
   html << '<tr><th>Index</th><th>FG</th><th>BG</th><th>Sample</th></tr>'
-  getFgBg().each{ k, fsBg ->
+  getFgBg().each { k, fsBg ->
     String fg = fsBg[0]
     String bg = fsBg[1]
     html << "<tr><td align='center'>${k}</td><td>${fg}</td><td>${bg}</td>"

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <body>
+<span style='color: #FF8888; background-color: ##0000FF;'>THIS IS A TEST</span>
+<b>BUYER BEWARE</b>
+<p>This package contains a <b>Hubitat Library</b>.</p>
+<ul>
+  <li>A <b>Hubitat Library</b> is just a file of source code fragments.</li>
+  <li>Libraries are fantastic for isolating code that is reused by
+multiple <b>Apps & Devices</b>.</li>
+  <li>The source code for <b>Apps & Devices</b> uses
+  "<code>#include myNamespace.myLibrary</code>" to <em>copy in</em> the content
+  of the library (the library file).</li>
+  <li>As <b>Apps & Devices</b> are constructed they hold library content
+  as of their creation time.</li>
+  <li>If the content of a library changes, the changes are seen as new
+  <b>Apps & Devices</b> are constructed. The content changes are not seen
+  by previously consctructed <b>Apps & Devices</b>.</li>
+</ul>
+
+<b>Library Version Control</b>
+<ul>
+  <li>Hubitat <b>DOES NOT</b> provide a facility for versioning libraries.</li>
+  <li>HPM can deploy a library as a component of a <b>Hubitat Bundle</b>.</li>
+  <li>Bundling a library (a file) <b>DOES NOT</b> alter the absence of
+  library versioning inherent to Hubitat.</li>
+  <li>The only real way to achieve a versioned library in Hubitat (and thus
+  HPM) is to alter the libraries filename - e.g., <code>myLibraryV1.groovy</code>,
+  <code>myLibraryV2.groovy</code>.</li>
+  <li>HPM can deliver multiple versions of the product named<b>myLibrary</b>.</li>
+  <ul>
+    <li>V1 of <b>myLibrary</b> would be myLibraryV1_bundle with a copy of
+    <code>myLibraryV1.groovy</code>.</li>
+    <li>V2 of <b>myLibrary</b> would be myLibraryV2_bundle with a copy of
+    <code>myLibraryV2.groovy</code>.</li>
+    <li>HPM will want to update <b>myLibrary</b> V1 to V2.</li>
+    <li>Clients may elect to field some <b>myLibrary</b> V1 and V2
+    <b>Apps & Devices</b> which is possible since <code>myLibraryV1.groovy</code>
+    and <code>myLibraryV2.groovy</code> can be deployed concurrently.</li>
+  </ul>
+<li>The only safe way to deploy multiple versions of a library concurrently
+is to use a different filename per library version.</li>
+<ul>
+  <li><code>#include myNamespace.myLibraryV1</code></li>
+  vs.
+  <li><code>#include myNamespace.myLibraryV2</code></li>
+</ul>
+</ul>
+  </body>
+</html>

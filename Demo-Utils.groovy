@@ -12,6 +12,8 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
 //   implied.
 // ---------------------------------------------------------------------------------
+// The Groovy Linter generates NglParseError on Hubitat #include !!!
+#include WesMC.lUtils
 import com.hubitat.app.ChildDeviceWrapper as ChildDevW
 import com.hubitat.app.DeviceWrapper as DevW
 import com.hubitat.app.InstalledAppWrapper as InstAppW
@@ -22,9 +24,6 @@ import groovy.transform.Field
 import java.lang.Math as Math
 import java.lang.Object as Object
 import java.util.concurrent.ConcurrentHashMap
-
-// The Groovy Linter generates NglParseError on Hubitat #include !!!
-#include WesMC.lUtils
 
 definition (
   name: 'Demo-Utils',
@@ -161,10 +160,11 @@ void demoAlert() {
 void demoTdBordered() {
   paragraph([
     h1('Demo Individually-Bordered Table Cell'),
-    """<table><tr><td>one</td><td>two</td><td>three</td></tr>
-    <tr><td>four</td>${tdBordered('five')}<td>six</td></tr>
-    <tr><td>seven</td><td>eight</td>${tdBordered('nine')}</tr>"""
-  ].join('<br/>'))
+    '<table><tr><td>one</td><td>two</td><td>three</td></tr>',
+    "<tr><td>four</td>${tdBordered('five')}<td>six</td></tr>",
+    "<tr><td>seven</td><td>eight</td>${tdBordered('nine')}</tr>",
+    '</table>'
+  ].join())
 }
 
 void demoColorTable() {

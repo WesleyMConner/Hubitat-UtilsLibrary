@@ -2,10 +2,10 @@
 // CONSIDER INSTALLING AN ASCIIDOC BROWSER EXTENSION:
 // https://docs.asciidoctor.org/browser-extension/install/
 
-= Hubitat-UtilsLibrary
+= WmcUtil
 Hubitat-compatible code written for Hubitat's Groovy sandbox environment.
 
-The *Apps | Devices* in the *WesMC* namespace utilize this foundational library. This library can be used in isolation. Key features include:
+The *Apps | Devices* in the *Wmc* namespace utilize this foundational library. This library can be used in isolation. Key features include:
 
 HTML-like wrapper functions for use in Hubitat Pages AND Logs: ::
 ```
@@ -65,12 +65,12 @@ Make sure that the *Hubitat Package Manager (HPM)* is installed. +
 https://hubitatpackagemanager.hubitatcommunity.com[HPM Hubitat Community] · https://hubitatpackagemanager.hubitatcommunity.com/installing.html[Installing HPM] · https://bit.ly/3VfykH9[HpmBundle.ZIP] +
 In a Nutshell: (1) Install the HpmBundle.ZIP then (2) Install the *Hubitat Package Manager* application (available via the bundle). (3) In HPM `install` → `Browse by Tags` (allow any refreshing to occur) → Choose the tag "utility" and click "Next" → I N C O M P L E T E
 
-A https://hubitatpackagemanager.hubitatcommunity.com/[Hubitat Package Manager (HPM)] package manifest used to make the `lUtils.zip` bundle available via the moniker `WesMC-UtilsLibrary` in HPM.
+A https://hubitatpackagemanager.hubitatcommunity.com/[Hubitat Package Manager (HPM)] package manifest used to make the `lUtils.zip` bundle available via the moniker `Wmc-UtilsLibrary` in HPM.
 
 == Advanced Logging
 
 IMPORTANT:: When PBSG leverages sendEvent(), the `descriptionText` field may
-include "fancy labels" from WesMC.lUtils. The relevant HTML can be removed using `String stripHued(String html)`, which is also found in WesMC.lUtils.
+include "fancy labels" from Wmc.WmcUtilsLib_1.0.0. The relevant HTML can be removed using `String stripHued(String html)`, which is also found in Wmc.WmcUtilsLib_1.0.0.
 
 [width="100%", frame="ends", grid="all", cols=">.^20,^.^20,<.^60"]
 |===

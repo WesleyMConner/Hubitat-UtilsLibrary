@@ -1,40 +1,28 @@
 {
   "files": [
     {
-      "filepath": "/Users/wes/hubitat-workspace/Hubitat-UtilsLibrary/lUtils.groovy",
+      "filepath": "/Users/wes/hubitat-workspace/Wmc-Utils-Bundle/WmcUtilsLib_1.0.0.groovy",
       "codeType": "library",
-      "id": 43,
-      "version": 105
+      "id": 44,
+      "version": 57
     },
     {
-      "filepath": "/Users/wes/hubitat-workspace/Hubitat-UtilsLibrary/Demo-Utils.groovy",
+      "filepath": "/Users/wes/hubitat-workspace/Wmc-Utils-Bundle/WmcUtilsDemo_1.0.0.groovy",
       "codeType": "app",
-      "id": 483,
-      "version": 61
+      "id": 487,
+      "version": 12
     },
     {
-      "filepath": "/Users/wes/hubitat-workspace/Hubitat-UtilsLibrary/LogWrapper.groovy",
-      "codeType": "driver",
-      "id": 1070,
-      "version": 44
-    },
-    {
-      "filepath": "/Users/wes/hubitat-workspace/Hubitat-UtilsLibrary/Demo-LogWrapper.groovy",
-      "codeType": "app",
-      "id": 482,
-      "version": 17
-    },
-    {
-      "filepath": "/Users/wes/hubitat-workspace/WesMC-Utils-Bundle/Demo-Utils.groovy",
-      "codeType": "app",
-      "id": 485,
+      "filepath": "/Users/wes/hubitat-workspace/WmcUtils/WmcUtilsLib_1_0_0.groovy",
+      "codeType": "library",
+      "id": 45,
       "version": 1
     },
     {
-      "filepath": "/Users/wes/hubitat-workspace/WesMC-Utils-Bundle/testHtmlToJson.groovy",
+      "filepath": "/Users/wes/hubitat-workspace/WmcUtils/WmcUtilsDemo_1_0_0.groovy",
       "codeType": "app",
-      "id": 486,
-      "version": 31
+      "id": 488,
+      "version": 1
     }
   ]
 }

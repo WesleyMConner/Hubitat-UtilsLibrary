@@ -31,7 +31,7 @@
 @Field static ConcurrentHashMap<String, String> HUED_CACHE = [:]
 
 library(
- name: 'lUtils',
+ name: 'WmcUtilsLib_1_0_0',
  namespace: 'Wmc',
  author: 'WesleyMConner',
  description: 'Methods leveraged generally across other libraries and Apps',
@@ -180,21 +180,21 @@ Map getFgBg() {
      '-3': ['#10DEE1', '#C05000'],  '-2': ['#00FF00', '#C05000'],
      '-1': ['#FFFFFF', '#9400D3'],   '0': ['#FFEA00', '#9400D3'],
       '1': ['#FFA000', '#9400D3'],   '2': ['#10DEE1', '#9400D3'],
-      '3': ['#00FF00', '#9400D3'],   '4': ['#FFFFFF', '#808000'],
-      '5': ['#FFEA00', '#808000'],   '6': ['#FFA000', '#808000'],
-      '7': ['#10DEE1', '#808000'],   '8': ['#00FF00', '#808000'],
+      '3': ['#00FF00', '#9400D3'],   '4': ['#FFFFFF', '#606000'],
+      '5': ['#FFEA00', '#606000'],   '6': ['#FFA000', '#606000'],
+      '7': ['#10DEE1', '#606000'],   '8': ['#00FF00', '#606000'],
       '9': ['#FFFFFF', '#800000'],  '10': ['#FFEA00', '#800000'],
      '11': ['#FFA000', '#800000'],  '12': ['#FF8888', '#800000'],
      '13': ['#10DEE1', '#800000'],  '14': ['#00FF00', '#800000'],
      '15': ['#FFFFFF', '#4B0082'],  '16': ['#FFEA00', '#4B0082'],
      '17': ['#FFA000', '#4B0082'],  '18': ['#FF8888', '#4B0082'],
      '19': ['#FF34B3', '#4B0082'],  '20': ['#10DEE1', '#4B0082'],
-     '21': ['#00FF00', '#4B0082'],  '22': ['#FFFFFF', '#008080'],
-     '23': ['#FFEA00', '#008080'],  '24': ['#FFA000', '#008080'],
-     '25': ['#FE6F4F', '#008080'],  '26': ['#10DEE1', '#008080'],
-     '27': ['#00FF00', '#008080'],  '28': ['#FFFFFF', '#0000FF'],
-     '29': ['#FFEA00', '#0000FF'],  '30': ['#FF8888', '#0000FF'],
-     '31': ['#10DEE1', '#0000FF'],  '32': ['#00FF00', '#0000FF'],
+     '21': ['#00FF00', '#4B0082'],  '22': ['#FFFFFF', '#006060'],
+     '23': ['#FFEA00', '#006060'],  '24': ['#FFA000', '#006060'],
+     '25': ['#FF8888', '#006060'],  '26': ['#10DEE1', '#006060'],
+     '27': ['#00FF00', '#006060'],  '28': ['#FFFFFF', '#0000FF'],
+     '29': ['#FFEA00', '#0000FF'],  '30': ['#FF34B3', '#0000FF'],
+     '31': ['#20EEF1', '#0000FF'],  '32': ['#20FF20', '#0000FF'],
      '33': ['#FFFFFF', '#000000'],  '34': ['#FFEA00', '#000000'],
      '35': ['#FFA000', '#000000'],  '36': ['#FF8888', '#000000'],
      '37': ['#FF34B3', '#000000'],  '38': ['#10DEE1', '#000000'],
@@ -220,7 +220,7 @@ String getFgBgTable() {
     String fg = fsBg[0]
     String bg = fsBg[1]
     html << "<tr><td align='center'>${k}</td><td>${fg}</td><td>${bg}</td>"
-    html << "<td style='color: ${fg}; background-color: ${bg};'>Sample 123</td></tr>"
+    html << "<td style='color: ${fg}; background-color: ${bg};'>WmcLengthyName</td></tr>"
   }
   html << '</table>'
   return html.join()
@@ -263,9 +263,25 @@ String hued(Event e) {
 }
 
 String hued(String sArg = null, Long iArg = null) {
-  String s = sArg ?: app?.getLabel() ?: device?.getDeviceNetworkId()
+  //String s = sArg ?: app?.getLabel() ?: device?.getDeviceNetworkId()
+  String s = sArg ?: app?.getLabel() ?: app?.getName()?.toString() ?: device?.getDeviceNetworkId()
   Long i = iArg ?: app?.id ?: (device?.id as Long)
-  String key = "${s}_${i}"
+  String key = "${s}&#x25FC;${i}"
+  String ss = (s && s.length() > 15 ) ? "…${s.substring(s.length() - 15, s.length())}" : s
+  return [
+    "sArg: ${sArg}",
+    "app?.getLabel(): ${app?.getLabel()}",
+    "app?.getName()?.toString(): ${app?.getName()?.toString()}",
+    "device?.getDeviceNetworkId(): ${device?.getDeviceNetworkId()}",
+    "iArg: ${iArg}",
+    "app?.id: ${app?.id}",
+    "device?.id as Long: ${device?.id as Long}",
+    "s: ${s}",
+    "i: ${i}",
+    "key: ${key}",
+    "ss: ${ss}"
+  ].join('<br/>')
+//logDebug('hued', "key: ${key}")
   String fLabel = HUED_CACHE[key]
   if (!fLabel) {
     String index = "${Math.round(s.hashCode() / i) % 39}"
@@ -273,7 +289,7 @@ String hued(String sArg = null, Long iArg = null) {
     if (fgBg) {
       fLabel = [
         "<span style='color: ${fgBg[0]}; background-color: ${fgBg[1]};'>",
-        s,
+        "…${ss}",
         '</span>'
       ].join()
       HUED_CACHE[key] = fLabel

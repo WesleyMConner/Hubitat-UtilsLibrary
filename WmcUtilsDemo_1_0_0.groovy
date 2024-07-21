@@ -13,7 +13,7 @@
 //   implied.
 // ---------------------------------------------------------------------------------
 // The Groovy Linter generates NglParseError on Hubitat #include !!!
-#include Wmc.lUtils
+#include Wmc.WmcUtilsLib_1_0_0
 import com.hubitat.app.ChildDeviceWrapper as ChildDevW
 import com.hubitat.app.DeviceWrapper as DevW
 import com.hubitat.app.InstalledAppWrapper as InstAppW
@@ -26,7 +26,7 @@ import java.lang.Object as Object
 import java.util.concurrent.ConcurrentHashMap
 
 definition (
-  name: 'Demo-Utils',
+  name: 'WmcUtilsDemo_1_0_0',
   namespace: 'Wmc',
   author: 'Wesley M. Conner',
   description: 'Demo lUtils methods',
@@ -37,8 +37,8 @@ definition (
 
 preferences {
   page(
-    name: 'Demo-Utils',
-    title: h1("Demo-Utils (${app.id})"),
+    name: 'WmcUtilsDemo_1.0.0',
+    title: h1("WmcUtilsDemo_1.0.0 (${app.id})"),
     install: true,
     uninstall: true
   ) {
@@ -48,6 +48,24 @@ preferences {
     //-> atomicState.remove('..')
     //---------------------------------------------------------------------------------
     section {
+
+String s = sArg ?: app?.getLabel() ?: app?.getName()?.toString() ?: device?.getDeviceNetworkId()
+Long i = iArg ?: app?.id ?: (device?.id as Long)
+String key = "${s}&#x25FC;${i}"
+String ss = (s && s.length() > 15 ) ? "…${s.substring(s.length() - 15, s.length())}" : s
+paragraph([
+  "sArg: ${sArg}",
+  "app?.getLabel(): ${app?.getLabel()}",
+  "app?.getName()?.toString(): ${app?.getName()?.toString()}",
+  "device?.getDeviceNetworkId(): ${device?.getDeviceNetworkId()}",
+  "iArg: ${iArg}",
+  "app?.id: ${app?.id}",
+  "device?.id as Long: ${device?.id as Long}",
+  "s: ${s}",
+  "i: ${i}",
+  "key: ${key}",
+  "ss: ${ss}"
+].join('<br/>'))
       paragraph([
         h1('Header Level 1'),
         h2('Header Level 2'),
@@ -184,7 +202,7 @@ void exerciseHuedCache() {
 ArrayList addTestDataToCache() {
   return [
     h2('CREATING SAMPLE ENTRIES IN HUED_CACHE:'),
-    "hued('Apple', 15) -> <code>${hued('Apple', 15)}</code>",
+    "hued('Apple', 15) -> ${hued('Apple', 15)}",
     "hued('Banana', 1015) -> ${hued('Banana', 1015)}",
     "hued('Carrot', 2015) -> ${hued('Carrot', 2015)}",
     "hued('Donut', 3015) -> ${hued('Donut', 3015)}",
